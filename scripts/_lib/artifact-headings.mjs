@@ -57,18 +57,20 @@ export const ARTIFACT_HEADINGS = {
     "## Network Policies",
   ],
   "04-preflight-check.md": [
-    "## Preflight Summary",
-    "## Subscription Readiness",
-    "## Quota Checks",
-    "## Policy Compliance",
-    "## Provider Registration",
+    "## Purpose",
+    "## AVM Schema Validation Results",
+    "## Parameter Type Analysis",
+    "## Region Limitations Identified",
+    "## Pitfalls Checklist",
+    "## Ready for Implementation",
   ],
   "05-implementation-reference.md": [
-    "## Bicep Templates Location",
+    "## IaC Templates Location",
     "## File Structure",
     "## Validation Status",
     "## Resources Created",
     "## Deployment Instructions",
+    "## Key Implementation Notes",
   ],
   "06-deployment-summary.md": [
     "## Deployment Details",
@@ -141,7 +143,9 @@ export const ARTIFACT_HEADINGS = {
   ],
   "09-lessons-learned.md": [
     "## Summary",
-    "## Lessons Learned",
+    "## Lessons by Severity",
+    "## Per-Step Findings",
     "## Recommendations",
+    "## Appendix: Full Lesson Details",
   ],
 };

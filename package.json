@@ -17,7 +17,7 @@
     "lint:artifact-templates": "node scripts/validate-artifact-templates.mjs",
     "lint:cost-estimate-templates": "node scripts/validate-cost-estimate-templates.mjs",
     "lint:terraform-fmt": "terraform fmt -check -recursive",
-    "lint:python": "python3 -m flake8 scripts/ mcp/ --exclude=.venv",
+    "lint:python": "./.venv/bin/python -m flake8 scripts/ mcp/ --exclude=.venv || python3 -m flake8 scripts/ mcp/ --exclude=.venv",
     "validate:agents": "node scripts/validate-agents.mjs",
     "validate:agent-registry": "node scripts/validate-agent-registry.mjs",
     "validate:artifacts": "node scripts/validate-artifacts.mjs",

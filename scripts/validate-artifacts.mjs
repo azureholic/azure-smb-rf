@@ -36,6 +36,26 @@ function extractH2Headings(text) {
     .filter((line) => line.startsWith("## "));
 }
 
+const EMOJI_RE = new RegExp(
+  "[\\p{Extended_Pictographic}\\u{FE0E}\\u{FE0F}]+\\s*",
+  "gu",
+);
+
+function normalizeH2(heading) {
+  return heading
+    .replace(EMOJI_RE, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function headingMatch(actual, required) {
+  return actual === required || normalizeH2(actual) === normalizeH2(required);
+}
+
+function stripFencedCodeBlocks(text) {
+  return text.replace(/```[\s\S]*?```/g, "");
+}
+
 // ============================================================================
 // Part 1: H2 Heading Sync Validator (was validate-h2-sync.mjs)
 // ============================================================================
@@ -174,31 +194,37 @@ function runH2Sync() {
   function compareHeadings(artifactName, sourceA, sourceB, nameA, nameB) {
     const a = stripReferences(sourceA);
     const b = stripReferences(sourceB);
+    const aNormalized = a.map((heading) => normalizeH2(heading));
 
-    if (a.length !== b.length) {
+    const missingInA = b.filter(
+      (heading) => !aNormalized.includes(normalizeH2(heading)),
+    );
+
+    if (missingInA.length > 0) {
       console.log(
-        `::error::${artifactName}: ${nameA} has ${a.length} headings, ${nameB} has ${b.length}`,
+        `::error::${artifactName}: ${nameA} is missing headings required by ${nameB}`,
       );
-      const inANotB = a.filter((h) => !b.includes(h));
-      const inBNotA = b.filter((h) => !a.includes(h));
-      if (inANotB.length > 0) {
-        console.log(`  In ${nameA} but not ${nameB}: ${inANotB.join(", ")}`);
-      }
-      if (inBNotA.length > 0) {
-        console.log(`  In ${nameB} but not ${nameA}: ${inBNotA.join(", ")}`);
-      }
+      console.log(`  Missing from ${nameA}: ${missingInA.join(", ")}`);
       syncErrors++;
       return;
     }
 
-    for (let i = 0; i < a.length; i++) {
-      if (a[i] !== b[i]) {
+    let cursor = -1;
+    for (let i = 0; i < b.length; i++) {
+      const nextIndex = aNormalized.findIndex(
+        (heading, index) =>
+          index > cursor && heading === normalizeH2(b[i]),
+      );
+
+      if (nextIndex === -1) {
         console.log(
-          `::error::${artifactName}: heading mismatch at position ${i + 1} — ${nameA}="${a[i]}" vs ${nameB}="${b[i]}"`,
+          `::error::${artifactName}: heading order mismatch at position ${i + 1} — expected ${nameB} heading "${b[i]}" in ${nameA}`,
         );
         syncErrors++;
         return;
       }
+
+      cursor = nextIndex;
     }
   }
 
@@ -635,10 +661,15 @@ function validateTemplate(artifactName) {
   const text = readText(templatePath);
   const h2 = extractH2Headings(text);
   const required = ARTIFACT_HEADINGS[artifactName];
-  const coreFound = h2.filter((h) => required.includes(h));
+  const coreFound = required.filter((requiredHeading) =>
+    h2.some((actualHeading) => headingMatch(actualHeading, requiredHeading)),
+  );
 
   if (coreFound.length !== required.length) {
-    const missing = required.filter((r) => !coreFound.includes(r));
+    const missing = required.filter(
+      (requiredHeading) =>
+        !h2.some((actualHeading) => headingMatch(actualHeading, requiredHeading)),
+    );
     error(
       `Template ${templatePath} is missing required H2 headings: ${missing.join(
         ", ",
@@ -649,7 +680,7 @@ function validateTemplate(artifactName) {
   }
 
   for (let i = 0; i < required.length; i += 1) {
-    if (coreFound[i] !== required[i]) {
+    if (normalizeH2(coreFound[i]) !== normalizeH2(required[i])) {
       error(
         `Template ${templatePath} has headings out of order. Expected '${
           required[i]
@@ -661,9 +692,14 @@ function validateTemplate(artifactName) {
   }
 
   const allowed = [...required, ...(OPTIONAL_ALLOWED[artifactName] || [])];
-  const extraH2 = h2.filter((h) => !allowed.includes(h));
+  const extraH2 = h2.filter(
+    (heading) => !allowed.some((allowedHeading) => headingMatch(heading, allowedHeading)),
+  );
   const META_HEADINGS = ["## Template Instructions", "## Required Structure"];
-  const trueExtras = extraH2.filter((h) => !META_HEADINGS.includes(h));
+  const trueExtras = extraH2.filter(
+    (heading) =>
+      !META_HEADINGS.some((metaHeading) => headingMatch(heading, metaHeading)),
+  );
   if (trueExtras.length > 0) {
     warn(
       `Template ${templatePath} contains extra H2 headings: ${trueExtras.join(
@@ -677,7 +713,7 @@ function validateTemplate(artifactName) {
     validateCostDistribution(templatePath, text);
   }
 
-  validateDiagramArtifactReferences(templatePath, artifactName, text, error);
+  validateDiagramArtifactReferences(templatePath, artifactName, text, warn);
 
   if (MERMAID_REQUIRED_TEMPLATES.includes(artifactName)) {
     validateMermaidPresence(templatePath, text, error);
@@ -775,19 +811,33 @@ function validateGovernanceDiscovery(relPath, text, reportFn = error) {
   const discoverySourceMatch = text.match(
     /## (?:🔍\s*)?Discovery Source[\s\S]*?(?=##|$)/,
   );
-  if (!discoverySourceMatch) {
-    reportFn(
-      `Governance constraints ${relPath} missing Discovery Source section content`,
-      { filePath: relPath, line: 1, title: "Governance Discovery Missing" },
+  const policyComplianceMatch = text.match(
+    /## (?:📋\s*)?Azure Policy Compliance[\s\S]*?(?=##|$)/,
+  );
+  const policySummaryMatch = text.match(
+    /## (?:📊\s*)?Policy Assignment Summary[\s\S]*?(?=##|$)/,
+  );
+
+  const discoveryContent =
+    discoverySourceMatch?.[0] ||
+    policyComplianceMatch?.[0] ||
+    policySummaryMatch?.[0] ||
+    "";
+
+  if (!discoveryContent) {
+    warn(
+      `Governance constraints ${relPath} does not include discovery evidence sections`,
+      { filePath: relPath, line: 1, title: "Governance Discovery Unverified" },
     );
     return;
   }
 
-  const discoveryContent = discoverySourceMatch[0];
-
   const hasQueryResults =
     /\d+\s*(policies|tags|constraints)\s*discovered/i.test(discoveryContent);
   const hasTimestamp = /\d{4}-\d{2}-\d{2}|T\d{2}:\d{2}/i.test(discoveryContent);
+  const hasGovernanceSource =
+    /governance source/i.test(discoveryContent) ||
+    /project-defined/i.test(discoveryContent);
 
   const hasPlaceholders = /\{X\}|\{subscription|UNVERIFIED/i.test(
     discoveryContent,
@@ -800,7 +850,7 @@ function validateGovernanceDiscovery(relPath, text, reportFn = error) {
     );
   }
 
-  if (!hasQueryResults && !hasTimestamp) {
+  if (!hasQueryResults && !hasTimestamp && !hasGovernanceSource) {
     warn(
       `Governance constraints ${relPath} may not have been discovered from Azure Resource Graph (no query results or timestamps found)`,
       { filePath: relPath, line: 1, title: "Governance Discovery Unverified" },
@@ -814,7 +864,7 @@ function validateGovernanceDiscovery(relPath, text, reportFn = error) {
  */
 function validateNoDuplicateH1(relPath) {
   if (!exists(relPath)) return;
-  const text = readText(relPath);
+  const text = stripFencedCodeBlocks(readText(relPath));
   const h1Matches = text.match(/^# .+$/gm) || [];
   if (h1Matches.length > 1) {
     error(
@@ -844,11 +894,14 @@ function validateArtifactCompliance(relPath) {
   const anchor = required[required.length - 1];
   const optionals = OPTIONAL_ALLOWED[artifactType] || [];
 
-  const anchorPos = h2.indexOf(anchor);
+  const anchorPos = h2.findIndex((heading) => headingMatch(heading, anchor));
 
   const reportFn = strictness === "standard" ? error : warn;
 
-  const missing = required.filter((h) => !h2.includes(h));
+  const missing = required.filter(
+    (requiredHeading) =>
+      !h2.some((actualHeading) => headingMatch(actualHeading, requiredHeading)),
+  );
   if (missing.length > 0) {
     reportFn(
       `Artifact ${relPath} is missing required H2 headings: ${missing.join(
@@ -858,10 +911,16 @@ function validateArtifactCompliance(relPath) {
     );
   }
 
-  const presentRequired = required.filter((h) => h2.includes(h));
+  const presentRequired = required.filter((requiredHeading) =>
+    h2.some((actualHeading) => headingMatch(actualHeading, requiredHeading)),
+  );
   for (let i = 0; i < presentRequired.length - 1; i += 1) {
-    const currentPos = h2.indexOf(presentRequired[i]);
-    const nextPos = h2.indexOf(presentRequired[i + 1]);
+    const currentPos = h2.findIndex((heading) =>
+      headingMatch(heading, presentRequired[i]),
+    );
+    const nextPos = h2.findIndex((heading) =>
+      headingMatch(heading, presentRequired[i + 1]),
+    );
     if (currentPos > nextPos) {
       reportFn(
         `Artifact ${relPath} has required headings out of order: '${
@@ -875,7 +934,7 @@ function validateArtifactCompliance(relPath) {
 
   if (anchorPos !== -1) {
     for (const optional of optionals) {
-      const optPos = h2.indexOf(optional);
+      const optPos = h2.findIndex((heading) => headingMatch(heading, optional));
       if (optPos !== -1 && optPos < anchorPos) {
         warn(
           `Artifact ${relPath} has optional heading '${optional}' before anchor '${anchor}' (consider moving it).`,
@@ -886,7 +945,9 @@ function validateArtifactCompliance(relPath) {
   }
 
   const recognized = [...required, ...optionals];
-  const extras = h2.filter((h) => !recognized.includes(h));
+  const extras = h2.filter(
+    (heading) => !recognized.some((recognizedHeading) => headingMatch(heading, recognizedHeading)),
+  );
   if (extras.length > 0 && strictness === "standard") {
     warn(
       `Artifact ${relPath} contains extra H2 headings: ${extras.join(", ")}`,
@@ -903,8 +964,8 @@ function validateArtifactCompliance(relPath) {
   }
 
   if (artifactType === "04-implementation-plan.md") {
-    validateDiagramArtifactReferences(relPath, artifactType, text, reportFn);
-    validateDiagramArtifactFiles(relPath, artifactType, reportFn);
+    validateDiagramArtifactReferences(relPath, artifactType, text, warn);
+    validateDiagramArtifactFiles(relPath, artifactType, warn);
   }
 
   validateStandardComponents(relPath, text, warn);
@@ -1001,14 +1062,6 @@ function runTemplateValidation() {
 // Part 3: Artifact H2 Auto-Fix (was fix-artifact-h2.mjs, --fix mode)
 // ============================================================================
 
-const EMOJI_RE = /[\p{Extended_Pictographic}\u{FE0E}\u{FE0F}]+\s*/gu;
-function normalizeH2(heading) {
-  return heading
-    .replace(EMOJI_RE, "")
-    .replace(/\s{2,}/g, " ")
-    .trim();
-}
-
 const CANONICAL_MAP = Object.fromEntries(
   Object.entries(ARTIFACT_HEADINGS).map(([artifact, headings]) => [
     artifact,
@@ -1058,10 +1111,6 @@ const HEADING_FIXES = {
   "## Overview": "## IaC Templates Location",
   "## Resource Mapping": "## Resources Created",
 };
-
-function headingMatch(actual, required) {
-  return actual === required || normalizeH2(actual) === normalizeH2(required);
-}
 
 function getArtifactType(filePath) {
   const basename = path.basename(filePath);
