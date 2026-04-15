@@ -1,53 +1,78 @@
 /**
- * Validation reporter with optional GitHub Actions annotations.
+ * Shared Validation Reporter
+ *
+ * Provides consistent error/warn/ok reporting and summary output
+ * across all validation scripts. Reduces ~150 lines of duplicated
+ * reporter boilerplate across 15+ validators.
+ *
+ * @example
+ *   import { Reporter } from "./_lib/reporter.mjs";
+ *   const r = new Reporter("Agent Frontmatter Validator");
+ *   r.error("file.md", "Missing required field");
+ *   r.warn("file.md", "Deprecated pattern");
+ *   r.ok("file.md", "Valid");
+ *   r.summary();          // prints summary
+ *   r.exitOnError();      // process.exit(1) if errors > 0
  */
 
-const isCI = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
-
 export class Reporter {
-  constructor(name) {
-    this.name = name;
+  /** @param {string} title - Validator display name */
+  constructor(title) {
+    this.title = title;
     this.errors = 0;
     this.warnings = 0;
-    this._checks = 0;
+    this.checked = 0;
   }
 
   header() {
-    console.log(`\n🔍 ${this.name}`);
-    console.log("─".repeat(60));
+    console.log(`\n🔍 ${this.title}\n`);
   }
 
+  /** Count an item as checked */
   tick() {
-    this._checks++;
+    this.checked++;
   }
 
-  ok(...args) {
-    if (args.length === 1) {
-      console.log(`  ✅ ${args[0]}`);
+  error(location, msg) {
+    if (msg === undefined) {
+      console.error(`  ❌ ${location}`);
     } else {
-      console.log(`  ✅ ${args[0]}: ${args[1]}`);
+      console.error(`  ❌ ${location}: ${msg}`);
     }
-  }
-
-  error(...args) {
     this.errors++;
-    if (args.length === 1) {
-      console.log(`  ❌ ${args[0]}`);
-    } else {
-      console.log(`  ❌ ${args[0]}: ${args[1]}`);
-    }
   }
 
-  warn(...args) {
+  /** GitHub Actions annotation format */
+  errorAnnotation(file, msg) {
+    console.log(`::error file=${file}::${msg}`);
+    this.errors++;
+  }
+
+  warn(location, msg) {
+    if (msg === undefined) {
+      console.warn(`  ⚠️  ${location}`);
+    } else {
+      console.warn(`  ⚠️  ${location}: ${msg}`);
+    }
     this.warnings++;
-    if (args.length === 1) {
-      console.log(`  ⚠️  ${args[0]}`);
+  }
+
+  warnAnnotation(file, msg) {
+    console.log(`::warning file=${file}::${msg}`);
+    this.warnings++;
+  }
+
+  ok(location, msg) {
+    if (msg === undefined) {
+      console.log(`  ✅ ${location}`);
     } else {
-      console.log(`  ⚠️  ${args[0]}: ${args[1]}`);
+      console.log(`  ✅ ${location}: ${msg}`);
     }
   }
 
+  /** Print check/description as pass or fail based on condition */
   check(description, condition, severity = "error") {
+    this.checked++;
     if (condition) {
       this.ok(description);
     } else if (severity === "warn") {
@@ -57,37 +82,29 @@ export class Reporter {
     }
   }
 
-  errorAnnotation(filePath, msg) {
-    if (isCI) {
-      console.log(`::error file=${filePath}::${msg}`);
-    }
-    this.error(filePath, msg);
-  }
-
-  warnAnnotation(filePath, msg) {
-    if (isCI) {
-      console.log(`::warning file=${filePath}::${msg}`);
-    }
-    this.warn(filePath, msg);
+  separator() {
+    console.log(`\n${"─".repeat(50)}`);
   }
 
   summary(label) {
-    const prefix = label ? `${label}: ` : "";
-    console.log("");
-    console.log(
-      `${prefix}${this._checks} checked, ${this.errors} error(s), ${this.warnings} warning(s)`,
-    );
+    this.separator();
+    const parts = [];
+    if (this.checked > 0) parts.push(`Checked: ${this.checked}`);
+    parts.push(`Errors: ${this.errors}`);
+    parts.push(`Warnings: ${this.warnings}`);
+    console.log(parts.join(" | "));
   }
 
+  /** Print final pass/fail and exit with appropriate code */
   exitOnError(passMsg, failMsg) {
     if (this.errors > 0) {
-      if (failMsg) console.log(`\n❌ ${failMsg}`);
-      else
-        console.log(`\n❌ ${this.name} failed with ${this.errors} error(s).`);
+      console.log(`\n❌ ${failMsg || `${this.errors} error(s) found`}`);
       process.exit(1);
+    }
+    if (this.warnings > 0) {
+      console.log(`\n⚠️  Passed with ${this.warnings} warning(s)`);
     } else {
-      if (passMsg) console.log(`\n✅ ${passMsg}`);
-      else console.log(`\n✅ ${this.name} passed.`);
+      console.log(`\n✅ ${passMsg || `${this.title} passed`}`);
     }
   }
 }

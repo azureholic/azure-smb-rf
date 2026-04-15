@@ -1,5 +1,14 @@
 /**
- * Workspace index — lazily discovers and caches agents, skills, and instructions.
+ * Shared Workspace Index
+ *
+ * Scans agents, skills, and instructions once and caches content +
+ * parsed frontmatter. All accessors are lazy-initialized on first call.
+ *
+ * Usage:
+ *   import { getAgents, getSkills, getInstructions } from "./_lib/workspace-index.mjs";
+ *   const agents = getAgents();   // Map<filename, { path, dir, content, frontmatter }>
+ *   const skills = getSkills();   // Map<skillName, { dir, content, frontmatter, hasRefs, refFiles }>
+ *   const instructions = getInstructions(); // Map<filename, { path, content, frontmatter }>
  */
 
 import fs from "node:fs";
@@ -12,75 +21,72 @@ import {
   INSTRUCTIONS_DIR,
 } from "./paths.mjs";
 
-const ROOT = process.cwd();
-
-// ─── Agents ──────────────────────────────────────────────────────────────────
-
 let _agents = null;
+let _skills = null;
+let _instructions = null;
 
 /**
- * Returns Map<filename, AgentEntry>.
- * filename = "02-requirements.agent.md"
+ * Returns a Map of all agent files: filename → { path, dir, content, frontmatter, isSubagent }
  */
 export function getAgents() {
   if (_agents) return _agents;
   _agents = new Map();
-
-  function scanDir(dir, isSubagent) {
-    const absDir = path.resolve(ROOT, dir);
-    if (!fs.existsSync(absDir)) return;
-    for (const entry of fs.readdirSync(absDir, { withFileTypes: true })) {
-      if (!entry.isFile() || !entry.name.endsWith(".agent.md")) continue;
-      const relPath = path.join(dir, entry.name);
-      const content = fs.readFileSync(path.resolve(ROOT, relPath), "utf-8");
-      _agents.set(entry.name, {
-        path: relPath,
+  for (const [dir, isSubagent] of [
+    [AGENTS_DIR, false],
+    [SUBAGENTS_DIR, true],
+  ]) {
+    if (!fs.existsSync(dir)) continue;
+    for (const file of fs.readdirSync(dir)) {
+      if (!file.endsWith(".agent.md")) continue;
+      const filePath = path.join(dir, file);
+      const content = fs.readFileSync(filePath, "utf-8");
+      const frontmatter = parseFrontmatter(content);
+      _agents.set(file, {
+        path: filePath,
+        dir,
         content,
-        frontmatter: parseFrontmatter(content),
+        frontmatter,
         isSubagent,
       });
     }
   }
-
-  scanDir(AGENTS_DIR, false);
-  scanDir(SUBAGENTS_DIR, true);
   return _agents;
 }
 
-// ─── Skills ──────────────────────────────────────────────────────────────────
-
-let _skills = null;
+/**
+ * Returns a Map of agent name (from frontmatter) → filename.
+ */
+export function getAgentNameMap() {
+  const map = new Map();
+  for (const [file, agent] of getAgents()) {
+    const name = agent.frontmatter?.name?.trim();
+    if (name) map.set(name, file);
+  }
+  return map;
+}
 
 /**
- * Returns Map<skillName, SkillEntry>.
- * skillName = "azure-defaults"
+ * Returns a Map of all skills: skillName → { dir, content, frontmatter, hasRefs, refFiles }
  */
 export function getSkills() {
   if (_skills) return _skills;
   _skills = new Map();
-
-  const absDir = path.resolve(ROOT, SKILLS_DIR);
-  if (!fs.existsSync(absDir)) return _skills;
-
-  for (const entry of fs.readdirSync(absDir, { withFileTypes: true })) {
+  if (!fs.existsSync(SKILLS_DIR)) return _skills;
+  for (const entry of fs.readdirSync(SKILLS_DIR, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
-    const skillDir = path.join(absDir, entry.name);
-    const skillMd = path.join(skillDir, "SKILL.md");
+    const skillDir = path.join(SKILLS_DIR, entry.name);
+    const skillFile = path.join(skillDir, "SKILL.md");
     const refsDir = path.join(skillDir, "references");
     const hasRefs = fs.existsSync(refsDir);
-
     let content = null;
     let frontmatter = null;
-    if (fs.existsSync(skillMd)) {
-      content = fs.readFileSync(skillMd, "utf-8");
+    if (fs.existsSync(skillFile)) {
+      content = fs.readFileSync(skillFile, "utf-8");
       frontmatter = parseFrontmatter(content);
     }
-
-    let refFiles = [];
-    if (hasRefs) {
-      refFiles = fs.readdirSync(refsDir).filter((f) => !f.startsWith("."));
-    }
-
+    const refFiles = hasRefs
+      ? fs.readdirSync(refsDir).filter((f) => f.endsWith(".md"))
+      : [];
     _skills.set(entry.name, {
       dir: skillDir,
       content,
@@ -89,53 +95,39 @@ export function getSkills() {
       refFiles,
     });
   }
-
   return _skills;
 }
 
-// ─── Skill Names ─────────────────────────────────────────────────────────────
-
-let _skillNames = null;
-
-/** Returns Set<string> of skill directory names. */
+/**
+ * Returns a Set of skill directory names.
+ */
 export function getSkillNames() {
-  if (_skillNames) return _skillNames;
-  const absDir = path.resolve(ROOT, SKILLS_DIR);
-  if (!fs.existsSync(absDir)) return new Set();
-  _skillNames = new Set(
-    fs
-      .readdirSync(absDir, { withFileTypes: true })
-      .filter((d) => d.isDirectory())
-      .map((d) => d.name),
-  );
-  return _skillNames;
+  return new Set(getSkills().keys());
 }
 
-// ─── Instructions ────────────────────────────────────────────────────────────
-
-let _instructions = null;
-
 /**
- * Returns Map<filename, InstructionEntry>.
- * filename = "agent-authoring.instructions.md"
+ * Returns a Map of all instructions: filename → { path, content, frontmatter }
  */
 export function getInstructions() {
   if (_instructions) return _instructions;
   _instructions = new Map();
-
-  const absDir = path.resolve(ROOT, INSTRUCTIONS_DIR);
-  if (!fs.existsSync(absDir)) return _instructions;
-
-  for (const entry of fs.readdirSync(absDir, { withFileTypes: true })) {
+  if (!fs.existsSync(INSTRUCTIONS_DIR)) return _instructions;
+  for (const entry of fs.readdirSync(INSTRUCTIONS_DIR, {
+    withFileTypes: true,
+    recursive: true,
+  })) {
     if (!entry.isFile() || !entry.name.endsWith(".instructions.md")) continue;
-    const relPath = path.join(INSTRUCTIONS_DIR, entry.name);
-    const content = fs.readFileSync(path.resolve(ROOT, relPath), "utf-8");
-    _instructions.set(entry.name, {
-      path: relPath,
-      content,
-      frontmatter: parseFrontmatter(content),
-    });
+    const filePath = path.join(entry.parentPath || entry.path, entry.name);
+    const content = fs.readFileSync(filePath, "utf-8");
+    const frontmatter = parseFrontmatter(content);
+    _instructions.set(entry.name, { path: filePath, content, frontmatter });
   }
-
   return _instructions;
+}
+
+/** Reset all caches (useful for testing). */
+export function resetIndex() {
+  _agents = null;
+  _skills = null;
+  _instructions = null;
 }

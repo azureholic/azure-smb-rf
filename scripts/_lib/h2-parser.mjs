@@ -1,38 +1,51 @@
 /**
- * Markdown H2 heading and section parser.
+ * Shared H2 Heading Parser
+ *
+ * Utilities for extracting and comparing H2 headings from markdown.
+ * Consolidates duplicate H2 logic across 4+ validators.
  */
 
 /**
- * Extract all H2 heading lines from markdown content.
- * Returns lines like "## Overview" (with the ## prefix).
+ * Extract all H2 heading texts from markdown content.
+ * @param {string} content - Markdown text
+ * @returns {string[]} Array of heading texts (without "## " prefix)
  */
 export function extractH2Headings(content) {
   return content
     .split("\n")
     .filter((line) => /^## /.test(line))
-    .map((line) => line.trimEnd());
+    .map((line) => line.replace(/^## /, "").trim());
 }
 
 /**
- * Split markdown into sections by H2 headings.
- * Returns array of { heading, lines } where heading is the text
- * after "## " (without the prefix) and lines contains all lines
- * in that section (until the next H2 or EOF).
+ * Extract H2 sections with their content lines.
+ * @param {string} content - Markdown text
+ * @returns {Array<{heading: string, lines: string[]}>}
  */
 export function extractH2Sections(content) {
-  const allLines = content.split("\n");
+  const lines = content.split("\n");
   const sections = [];
   let current = null;
 
-  for (const line of allLines) {
+  for (const line of lines) {
     if (/^## /.test(line)) {
       if (current) sections.push(current);
-      current = { heading: line.replace(/^## /, "").trimEnd(), lines: [] };
+      current = { heading: line.replace(/^## /, "").trim(), lines: [line] };
     } else if (current) {
       current.lines.push(line);
     }
   }
   if (current) sections.push(current);
-
   return sections;
+}
+
+/**
+ * Normalize a heading by stripping emoji and extra whitespace.
+ * @param {string} heading
+ * @returns {string}
+ */
+export function normalizeHeading(heading) {
+  return heading
+    .replace(/[\p{Extended_Pictographic}\u{FE0E}\u{FE0F}]+\s*/gu, "")
+    .trim();
 }
