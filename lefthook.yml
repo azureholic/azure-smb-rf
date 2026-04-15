@@ -63,3 +63,8 @@ commit-msg:
              feat: add new Azure App Service module
              fix(bicep): correct storage account naming
              docs: update README with deployment steps
+
+pre-push:
+  commands:
+    diff-based-validation:
+      run: bash scripts/diff-based-push-check.sh
