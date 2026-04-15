@@ -120,8 +120,8 @@ var regionAbbreviations = {
 
 ### Policy Assignment Design
 
-| Category   | Count | Effect Mix         | Assignment Prefix            |
-| ---------- | ----- | ------------------ | ---------------------------- |
+| Category   | Count | Effect Mix         | Assignment Prefix         |
+| ---------- | ----- | ------------------ | ------------------------- |
 | Compute    | 4     | 2 Deny, 2 Audit    | `smb-compute-*`           |
 | Network    | 4     | 1 Deny, 3 Audit    | `smb-network-*`           |
 | Storage    | 5     | 3 Deny, 2 Audit    | `smb-storage-*`           |

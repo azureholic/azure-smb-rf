@@ -56,7 +56,7 @@ permitted when no AVM module exists for the resource type.
 | Recovery Vault         | `avm/res/recovery-services/vault`         | 0.11.1  | LRS + policy      |
 | Budget                 | `avm/res/consumption/budget`              | 0.3.8   | $500/mo alerts    |
 | Key Vault              | `avm/res/key-vault/vault`                 | 0.11.0  | Private endpoint  |
-| Automation Account     | `avm/res/automation/automation-account`    | 0.11.0  | Runbook platform  |
+| Automation Account     | `avm/res/automation/automation-account`   | 0.11.0  | Runbook platform  |
 
 #### Justified Exceptions (No AVM Available)
 
@@ -170,8 +170,8 @@ infra/bicep/smb-ready-foundation/
 
 **Policy Assignments**:
 
-| #   | Policy                   | Built-in ID                          | Effect            | Assignment Name      |
-| --- | ------------------------ | ------------------------------------ | ----------------- | -------------------- |
+| #   | Policy                   | Built-in ID                          | Effect            | Assignment Name   |
+| --- | ------------------------ | ------------------------------------ | ----------------- | ----------------- |
 | 1   | Allowed VM SKUs          | cccc23c7-8427-4f53-ad12-b6a63eb452b3 | Deny              | smb-compute-01    |
 | 2   | No public IPs on NICs    | 83a86a26-fd1f-447c-b59d-e51f44264114 | Deny              | smb-compute-02    |
 | 3   | Audit managed disks      | 06a78e20-9358-41c9-923c-fb736d382a4d | Audit             | smb-compute-03    |
@@ -289,14 +289,14 @@ var deployPeering = deployFirewall || deployVpnGateway
 
 **Resources**:
 
-| Resource Group | Name Pattern              | Purpose                          |
-| -------------- | ------------------------- | -------------------------------- |
-| Hub            | rg-hub-{env}-{region}     | Hub VNet, Bastion, Firewall, VPN |
-| Spoke          | rg-spoke-{env}-{region}   | Spoke VNet, NAT Gateway          |
-| Monitor        | rg-monitor-{env}-{region} | Log Analytics                    |
-| Backup         | rg-backup-{env}-{region}  | Recovery Services Vault          |
-| Migrate        | rg-migrate-{env}-{region} | Azure Migrate Project            |
-| Security       | rg-security-{env}-{region}| Key Vault, Automation Account    |
+| Resource Group | Name Pattern               | Purpose                          |
+| -------------- | -------------------------- | -------------------------------- |
+| Hub            | rg-hub-{env}-{region}      | Hub VNet, Bastion, Firewall, VPN |
+| Spoke          | rg-spoke-{env}-{region}    | Spoke VNet, NAT Gateway          |
+| Monitor        | rg-monitor-{env}-{region}  | Log Analytics                    |
+| Backup         | rg-backup-{env}-{region}   | Recovery Services Vault          |
+| Migrate        | rg-migrate-{env}-{region}  | Azure Migrate Project            |
+| Security       | rg-security-{env}-{region} | Key Vault, Automation Account    |
 
 **Key Configuration**:
 
@@ -478,8 +478,8 @@ resource vault 'Microsoft.RecoveryServices/vaults@2024-04-01' = {
 
 **Resources**:
 
-| Resource | Name Pattern          | Configuration                  |
-| -------- | --------------------- | ------------------------------ |
+| Resource | Name Pattern       | Configuration                  |
+| -------- | ------------------ | ------------------------------ |
 | Budget   | budget-smb-monthly | $500/month, 80% forecast alert |
 
 **Key Configuration**:
@@ -679,7 +679,7 @@ graph TD
 | Log Analytics    | log-{project}-{env}-{region}   | log-smbrf-smb-swc     | Shared services use `smb`        |
 | Recovery Vault   | rsv-{project}-{env}-{region}   | rsv-smbrf-smb-swc     | Shared services use `smb`        |
 | Private DNS Zone | {service}.azure.com            | privatelink.azure.com |                                  |
-| Budget           | budget-{project}-monthly       | budget-smb-monthly |                                  |
+| Budget           | budget-{project}-monthly       | budget-smb-monthly    |                                  |
 
 **Region Abbreviations**:
 
@@ -690,13 +690,13 @@ graph TD
 
 ## Security Configuration
 
-| Resource         | Security Setting | Value                    | Policy Enforced      |
-| ---------------- | ---------------- | ------------------------ | -------------------- |
+| Resource         | Security Setting | Value                    | Policy Enforced   |
+| ---------------- | ---------------- | ------------------------ | ----------------- |
 | Hub NSG          | Default Inbound  | Deny All                 | ✅ smb-network-01 |
 | Spoke NSG        | Default Inbound  | Deny All                 | ✅ smb-network-01 |
-| Azure Bastion    | SKU              | Developer (no public IP) | N/A                  |
-| NAT Gateway      | Outbound SNAT    | Enabled                  | N/A                  |
-| Log Analytics    | Retention        | 30 days                  | N/A                  |
+| Azure Bastion    | SKU              | Developer (no public IP) | N/A               |
+| NAT Gateway      | Outbound SNAT    | Enabled                  | N/A               |
+| Log Analytics    | Retention        | 30 days                  | N/A               |
 | VMs (future)     | Public IPs       | Denied                   | ✅ smb-compute-02 |
 | VMs (future)     | Allowed SKUs     | B/D/E v5/v6              | ✅ smb-compute-01 |
 | Storage (future) | HTTPS Only       | Required                 | ✅ smb-storage-01 |

@@ -11,14 +11,14 @@
 This compliance matrix maps the SMB Ready Foundation security controls to Azure Security Baseline
 requirements and common regulatory frameworks.
 
-| Compliance Area    | Coverage | Status      | Notes                          |
-| ------------------ | -------- | ----------- | ------------------------------ |
-| Network Security   | 90%      | ✅ Compliant| NSG deny-all, Firewall option  |
-| Data Protection    | 85%      | ✅ Compliant| Key Vault deployed for secrets  |
-| Access Control     | 85%      | ✅ Compliant| Azure AD-only, no public IPs   |
-| Monitoring & Audit | 85%      | ✅ Compliant| Log Analytics, Defender Free, Automation |
-| Incident Response  | 60%      | ⚠️ Partial  | Manual runbooks only           |
-| **Overall**        | **83%**  | ✅ Compliant| Suitable for SMB workloads     |
+| Compliance Area    | Coverage | Status       | Notes                                    |
+| ------------------ | -------- | ------------ | ---------------------------------------- |
+| Network Security   | 90%      | ✅ Compliant | NSG deny-all, Firewall option            |
+| Data Protection    | 85%      | ✅ Compliant | Key Vault deployed for secrets           |
+| Access Control     | 85%      | ✅ Compliant | Azure AD-only, no public IPs             |
+| Monitoring & Audit | 85%      | ✅ Compliant | Log Analytics, Defender Free, Automation |
+| Incident Response  | 60%      | ⚠️ Partial   | Manual runbooks only                     |
+| **Overall**        | **83%**  | ✅ Compliant | Suitable for SMB workloads               |
 
 ---
 
@@ -26,66 +26,66 @@ requirements and common regulatory frameworks.
 
 ### 1.1 Network Security Controls
 
-| Control ID | Requirement                         | Implementation                    | Status      |
-| ---------- | ----------------------------------- | --------------------------------- | ----------- |
-| NS-1       | Network segmentation                | Hub-spoke topology, VNet peering  | ✅ Compliant|
-| NS-2       | Cloud-native firewall               | Azure Firewall (optional)         | ✅ Compliant|
-| NS-3       | Network Security Groups             | NSG on all subnets, deny-all      | ✅ Compliant|
-| NS-4       | DDoS Protection                     | Basic (free) only                 | ⚠️ Partial  |
-| NS-5       | Private endpoint for PaaS           | Private DNS Zone pre-configured   | ✅ Compliant|
-| NS-6       | No public endpoints                 | Policy: no public IPs on VMs      | ✅ Compliant|
-| NS-7       | Traffic encryption                  | TLS 1.2+ enforced                 | ✅ Compliant|
+| Control ID | Requirement               | Implementation                   | Status       |
+| ---------- | ------------------------- | -------------------------------- | ------------ |
+| NS-1       | Network segmentation      | Hub-spoke topology, VNet peering | ✅ Compliant |
+| NS-2       | Cloud-native firewall     | Azure Firewall (optional)        | ✅ Compliant |
+| NS-3       | Network Security Groups   | NSG on all subnets, deny-all     | ✅ Compliant |
+| NS-4       | DDoS Protection           | Basic (free) only                | ⚠️ Partial   |
+| NS-5       | Private endpoint for PaaS | Private DNS Zone pre-configured  | ✅ Compliant |
+| NS-6       | No public endpoints       | Policy: no public IPs on VMs     | ✅ Compliant |
+| NS-7       | Traffic encryption        | TLS 1.2+ enforced                | ✅ Compliant |
 
 **Evidence Location**: `infra/bicep/smb-ready-foundation/modules/networking-*.bicep`
 
 ### 1.2 Data Protection Controls
 
-| Control ID | Requirement                         | Implementation                    | Status      |
-| ---------- | ----------------------------------- | --------------------------------- | ----------- |
-| DP-1       | Data classification                 | Tags (Environment, Owner)         | ⚠️ Partial  |
-| DP-2       | Encryption at rest                  | Azure default (PMK)               | ✅ Compliant|
-| DP-3       | Customer-managed keys               | Key Vault deployed for future CMK | ⚠️ Partial  |
-| DP-4       | Encryption in transit               | HTTPS-only policy                 | ✅ Compliant|
-| DP-5       | Data backup                         | Azure Backup with retention       | ✅ Compliant|
-| DP-6       | Secure key management               | Azure Key Vault (Standard, RBAC)  | ✅ Compliant|
+| Control ID | Requirement           | Implementation                    | Status       |
+| ---------- | --------------------- | --------------------------------- | ------------ |
+| DP-1       | Data classification   | Tags (Environment, Owner)         | ⚠️ Partial   |
+| DP-2       | Encryption at rest    | Azure default (PMK)               | ✅ Compliant |
+| DP-3       | Customer-managed keys | Key Vault deployed for future CMK | ⚠️ Partial   |
+| DP-4       | Encryption in transit | HTTPS-only policy                 | ✅ Compliant |
+| DP-5       | Data backup           | Azure Backup with retention       | ✅ Compliant |
+| DP-6       | Secure key management | Azure Key Vault (Standard, RBAC)  | ✅ Compliant |
 
 **Evidence Location**: `infra/bicep/smb-ready-foundation/modules/policy-storage.bicep`
 
 ### 1.3 Access Control Controls
 
-| Control ID | Requirement                         | Implementation                    | Status      |
-| ---------- | ----------------------------------- | --------------------------------- | ----------- |
-| IM-1       | Centralized identity                | Azure AD                          | ✅ Compliant|
-| IM-2       | Managed identities                  | Recommended pattern               | ✅ Compliant|
-| IM-3       | Azure AD-only auth                  | SQL policy enforced               | ✅ Compliant|
-| IM-4       | No shared accounts                  | Azure AD per-user                 | ✅ Compliant|
-| PA-1       | Privileged access protection        | Azure Bastion, no public IPs      | ✅ Compliant|
-| PA-2       | Just-in-time access                 | Not implemented                   | ❌ Gap      |
-| PA-3       | Emergency access                    | Not implemented                   | ⚠️ Partial  |
+| Control ID | Requirement                  | Implementation               | Status       |
+| ---------- | ---------------------------- | ---------------------------- | ------------ |
+| IM-1       | Centralized identity         | Azure AD                     | ✅ Compliant |
+| IM-2       | Managed identities           | Recommended pattern          | ✅ Compliant |
+| IM-3       | Azure AD-only auth           | SQL policy enforced          | ✅ Compliant |
+| IM-4       | No shared accounts           | Azure AD per-user            | ✅ Compliant |
+| PA-1       | Privileged access protection | Azure Bastion, no public IPs | ✅ Compliant |
+| PA-2       | Just-in-time access          | Not implemented              | ❌ Gap       |
+| PA-3       | Emergency access             | Not implemented              | ⚠️ Partial   |
 
 **Evidence Location**: `infra/bicep/smb-ready-foundation/modules/policy-identity.bicep`
 
 ### 1.4 Monitoring & Audit Controls
 
-| Control ID | Requirement                         | Implementation                    | Status      |
-| ---------- | ----------------------------------- | --------------------------------- | ----------- |
-| LT-1       | Centralized logging                 | Log Analytics workspace           | ✅ Compliant|
-| LT-2       | Log retention                       | 30 days (configurable)            | ✅ Compliant|
-| LT-3       | Security event collection           | Defender for Cloud (Free)         | ⚠️ Partial  |
-| LT-4       | Alert on security events            | Not pre-configured                | ❌ Gap      |
-| AM-1       | Asset inventory                     | Azure Resource Graph              | ✅ Compliant|
-| AM-2       | Tag management                      | Required tags policy              | ✅ Compliant|
+| Control ID | Requirement               | Implementation            | Status       |
+| ---------- | ------------------------- | ------------------------- | ------------ |
+| LT-1       | Centralized logging       | Log Analytics workspace   | ✅ Compliant |
+| LT-2       | Log retention             | 30 days (configurable)    | ✅ Compliant |
+| LT-3       | Security event collection | Defender for Cloud (Free) | ⚠️ Partial   |
+| LT-4       | Alert on security events  | Not pre-configured        | ❌ Gap       |
+| AM-1       | Asset inventory           | Azure Resource Graph      | ✅ Compliant |
+| AM-2       | Tag management            | Required tags policy      | ✅ Compliant |
 
 **Evidence Location**: `infra/bicep/smb-ready-foundation/modules/monitoring.bicep`
 
 ### 1.5 Incident Response Controls
 
-| Control ID | Requirement                         | Implementation                    | Status      |
-| ---------- | ----------------------------------- | --------------------------------- | ----------- |
-| IR-1       | Incident response plan              | Operations Runbook                | ✅ Compliant|
-| IR-2       | Incident detection                  | Defender for Cloud alerts         | ⚠️ Partial  |
-| IR-3       | Incident containment                | Manual (NSG modification)         | ⚠️ Partial  |
-| IR-4       | Post-incident review                | Not implemented                   | ❌ Gap      |
+| Control ID | Requirement            | Implementation            | Status       |
+| ---------- | ---------------------- | ------------------------- | ------------ |
+| IR-1       | Incident response plan | Operations Runbook        | ✅ Compliant |
+| IR-2       | Incident detection     | Defender for Cloud alerts | ⚠️ Partial   |
+| IR-3       | Incident containment   | Manual (NSG modification) | ⚠️ Partial   |
+| IR-4       | Post-incident review   | Not implemented           | ❌ Gap       |
 
 **Evidence Location**: `agent-output/smb-ready-foundation/07-operations-runbook.md`
 
@@ -93,35 +93,35 @@ requirements and common regulatory frameworks.
 
 ## 2. Gap Analysis
 
-| Gap ID | Control    | Risk Level | Remediation                        | Timeline   |
-| ------ | ---------- | ---------- | ---------------------------------- | ---------- |
-| G-1    | DP-3 (CMK) | Medium     | Add Key Vault + CMK for storage    | Future     |
-| G-2    | PA-2 (JIT) | Medium     | Enable Defender JIT access         | Future     |
-| G-3    | LT-4       | Low        | Configure alert rules              | Customer   |
-| G-4    | NS-4 (DDoS)| Low        | Upgrade to DDoS Standard           | Customer   |
-| G-5    | IR-4       | Low        | Implement post-incident template   | Future     |
+| Gap ID | Control     | Risk Level | Remediation                      | Timeline |
+| ------ | ----------- | ---------- | -------------------------------- | -------- |
+| G-1    | DP-3 (CMK)  | Medium     | Add Key Vault + CMK for storage  | Future   |
+| G-2    | PA-2 (JIT)  | Medium     | Enable Defender JIT access       | Future   |
+| G-3    | LT-4        | Low        | Configure alert rules            | Customer |
+| G-4    | NS-4 (DDoS) | Low        | Upgrade to DDoS Standard         | Customer |
+| G-5    | IR-4        | Low        | Implement post-incident template | Future   |
 
 ### Gap Acceptance Rationale
 
-| Gap    | Accepted | Rationale                                              |
-| ------ | -------- | ------------------------------------------------------ |
-| G-1    | Yes      | Cost optimization priority; PMK is sufficient for SMB  |
-| G-2    | Yes      | Bastion provides similar control; JIT adds cost        |
-| G-3    | Partial  | Customer responsibility post-deployment                |
-| G-4    | Yes      | Basic DDoS sufficient for SMB; Standard is ~$3K/mo     |
-| G-5    | Yes      | Manual runbooks sufficient for SMB scale               |
+| Gap | Accepted | Rationale                                             |
+| --- | -------- | ----------------------------------------------------- |
+| G-1 | Yes      | Cost optimization priority; PMK is sufficient for SMB |
+| G-2 | Yes      | Bastion provides similar control; JIT adds cost       |
+| G-3 | Partial  | Customer responsibility post-deployment               |
+| G-4 | Yes      | Basic DDoS sufficient for SMB; Standard is ~$3K/mo    |
+| G-5 | Yes      | Manual runbooks sufficient for SMB scale              |
 
 ---
 
 ## 3. Evidence Collection
 
-| Control    | Evidence Type          | Location                                  | Last Collected |
-| ---------- | ---------------------- | ----------------------------------------- | -------------- |
-| NS-3       | NSG configuration      | Azure Portal → NSG → Rules                | 2026-02-02     |
-| DP-4       | Policy compliance      | Azure Policy → Compliance                 | 2026-02-02     |
-| IM-3       | SQL auth config        | Azure Portal → SQL Server → Azure AD      | 2026-02-02     |
-| LT-1       | Log Analytics          | Azure Portal → Log Analytics → Usage      | 2026-02-02     |
-| AM-2       | Tag compliance         | Azure Policy → smb-compliance-01       | 2026-02-02     |
+| Control | Evidence Type     | Location                             | Last Collected |
+| ------- | ----------------- | ------------------------------------ | -------------- |
+| NS-3    | NSG configuration | Azure Portal → NSG → Rules           | 2026-02-02     |
+| DP-4    | Policy compliance | Azure Policy → Compliance            | 2026-02-02     |
+| IM-3    | SQL auth config   | Azure Portal → SQL Server → Azure AD | 2026-02-02     |
+| LT-1    | Log Analytics     | Azure Portal → Log Analytics → Usage | 2026-02-02     |
+| AM-2    | Tag compliance    | Azure Policy → smb-compliance-01     | 2026-02-02     |
 
 ### Evidence Collection Script
 
@@ -129,7 +129,7 @@ requirements and common regulatory frameworks.
 // Query policy compliance status
 PolicyStates_CL
 | where policySetDefinitionName_s contains "smb-lz"
-| summarize 
+| summarize
     Compliant = countif(complianceState_s == "Compliant"),
     NonCompliant = countif(complianceState_s == "NonCompliant")
     by policyDefinitionName_s
@@ -140,22 +140,22 @@ PolicyStates_CL
 
 ## 4. Audit Trail
 
-| Date       | Auditor           | Finding                              | Status      |
-| ---------- | ----------------- | ------------------------------------ | ----------- |
-| 2026-02-02 | Initial Assessment| CMK not implemented                  | Accepted    |
-| 2026-02-02 | Initial Assessment| JIT access not configured            | Accepted    |
-| 2026-02-02 | Initial Assessment| DDoS Standard not enabled            | Accepted    |
+| Date       | Auditor            | Finding                   | Status   |
+| ---------- | ------------------ | ------------------------- | -------- |
+| 2026-02-02 | Initial Assessment | CMK not implemented       | Accepted |
+| 2026-02-02 | Initial Assessment | JIT access not configured | Accepted |
+| 2026-02-02 | Initial Assessment | DDoS Standard not enabled | Accepted |
 
 ---
 
 ## 5. Remediation Tracker
 
-| Finding           | Owner      | Due Date   | Status      | Notes                  |
-| ----------------- | ---------- | ---------- | ----------- | ---------------------- |
-| CMK for storage   | Customer   | N/A        | Deferred    | Cost decision          |
-| JIT VM access     | Customer   | N/A        | Deferred    | Requires Defender P2   |
-| Alert rules       | Customer   | Post-deploy| Open        | Customer configures    |
-| DDoS Standard     | Customer   | N/A        | Deferred    | ~$3K/mo additional     |
+| Finding         | Owner    | Due Date    | Status   | Notes                |
+| --------------- | -------- | ----------- | -------- | -------------------- |
+| CMK for storage | Customer | N/A         | Deferred | Cost decision        |
+| JIT VM access   | Customer | N/A         | Deferred | Requires Defender P2 |
+| Alert rules     | Customer | Post-deploy | Open     | Customer configures  |
+| DDoS Standard   | Customer | N/A         | Deferred | ~$3K/mo additional   |
 
 ---
 
@@ -172,8 +172,8 @@ The Azure Security Baseline provides security recommendations for Azure services
 
 ### B. Policy Assignments Summary
 
-| Policy Name          | Effect            | Compliance Rate |
-| -------------------- | ----------------- | --------------- |
+| Policy Name       | Effect            | Compliance Rate |
+| ----------------- | ----------------- | --------------- |
 | smb-compute-01    | Deny              | 100%            |
 | smb-compute-02    | Deny              | 100%            |
 | smb-network-01    | Audit             | 100%            |
@@ -184,14 +184,14 @@ The Azure Security Baseline provides security recommendations for Azure services
 
 ### C. Regulatory Framework Mapping
 
-| Requirement             | GDPR | ISO 27001 | SOC 2 | Notes                 |
-| ----------------------- | ---- | --------- | ----- | --------------------- |
-| Data residency          | ✅   | ✅        | ✅    | swedencentral (EU)    |
-| Encryption in transit   | ✅   | ✅        | ✅    | TLS 1.2+ enforced     |
-| Encryption at rest      | ✅   | ✅        | ✅    | Azure default (PMK)   |
-| Access control          | ✅   | ✅        | ✅    | Azure AD-only         |
-| Audit logging           | ✅   | ✅        | ✅    | Log Analytics         |
-| Incident response       | ⚠️   | ⚠️        | ⚠️    | Manual runbooks       |
+| Requirement           | GDPR | ISO 27001 | SOC 2 | Notes               |
+| --------------------- | ---- | --------- | ----- | ------------------- |
+| Data residency        | ✅   | ✅        | ✅    | swedencentral (EU)  |
+| Encryption in transit | ✅   | ✅        | ✅    | TLS 1.2+ enforced   |
+| Encryption at rest    | ✅   | ✅        | ✅    | Azure default (PMK) |
+| Access control        | ✅   | ✅        | ✅    | Azure AD-only       |
+| Audit logging         | ✅   | ✅        | ✅    | Log Analytics       |
+| Incident response     | ⚠️   | ⚠️        | ⚠️    | Manual runbooks     |
 
 ---
 

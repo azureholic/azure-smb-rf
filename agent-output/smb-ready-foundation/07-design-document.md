@@ -35,12 +35,12 @@ a cost-optimized, policy-enforced, standards-aligned foundation for workload mig
 
 ### 1.3 Design Objectives
 
-| Objective    | Target                  | Implementation                      |
-| ------------ | ----------------------- | ----------------------------------- |
-| Availability | Best-effort (no SLA)    | Single-region, no zone redundancy   |
-| Performance  | Standard workloads      | B/D/E-series VMs, Standard storage  |
+| Objective    | Target                  | Implementation                             |
+| ------------ | ----------------------- | ------------------------------------------ |
+| Availability | Best-effort (no SLA)    | Single-region, no zone redundancy          |
+| Performance  | Standard workloads      | B/D/E-series VMs, Standard storage         |
 | Security     | Azure Security Baseline | 34 Azure Policies, NSG deny-all, Key Vault |
-| Scalability  | Per-customer isolation  | Hub-spoke per customer subscription |
+| Scalability  | Per-customer isolation  | Hub-spoke per customer subscription        |
 
 ### 1.4 Constraints & Assumptions
 
@@ -107,7 +107,7 @@ a cost-optimized, policy-enforced, standards-aligned foundation for workload mig
 | Category   | Count | Resources                                            |
 | ---------- | ----- | ---------------------------------------------------- |
 | Compute    | 0     | None deployed (customer adds workloads)              |
-| Networking | 17    | VNets, Subnets, NSGs, Firewall, VPN, NAT, Routes, PE|
+| Networking | 17    | VNets, Subnets, NSGs, Firewall, VPN, NAT, Routes, PE |
 | Data       | 0     | None deployed (customer adds workloads)              |
 | Security   | 38    | 34 Policies, Key Vault, Automation, Defender, PE     |
 | Monitoring | 3     | Log Analytics, Budget alerts, Automation Account     |
@@ -145,7 +145,7 @@ The SMB Ready Foundation uses a **hub-and-spoke** topology within a single subsc
 | snet-workload | 10.0.2.0/25   | General workloads  | ✅ (firewall scenarios) |
 | snet-data     | 10.0.2.128/25 | Databases, storage | ✅ (firewall scenarios) |
 | snet-app      | 10.0.3.0/25   | Application tier   | ✅ (firewall scenarios) |
-| snet-pep      | 10.0.3.128/26 | Private endpoints  | ➖ (no UDR needed)     |
+| snet-pep      | 10.0.3.128/26 | Private endpoints  | ➖ (no UDR needed)      |
 
 ### 3.3 Network Security
 
@@ -193,8 +193,8 @@ No storage accounts are pre-deployed. Customer workloads should use:
 
 No VMs are pre-deployed. Customer workloads are constrained by policy:
 
-| Constraint | Allowed Values | Policy            |
-| ---------- | -------------- | ----------------- |
+| Constraint | Allowed Values | Policy         |
+| ---------- | -------------- | -------------- |
 | VM Series  | B, D, E only   | smb-compute-01 |
 | Public IPs | None allowed   | smb-compute-02 |
 | Disk Type  | Managed only   | smb-compute-03 |

@@ -1,10 +1,10 @@
 # Azure Cost Estimate: SMB Ready Foundation
 
-**Generated**: 2026-01-27  
-**Artifact Version**: 0.1  
-**Region**: swedencentral  
-**Environment**: Production  
-**MCP Tools Used**: azure_cost_estimate, azure_price_compare, azure_documentation  
+**Generated**: 2026-01-27
+**Artifact Version**: 0.1
+**Region**: swedencentral
+**Environment**: Production
+**MCP Tools Used**: azure_cost_estimate, azure_price_compare, azure_documentation
 **Architecture Reference**: [02-architecture-assessment.md](02-architecture-assessment.md)
 
 ## 💰 Cost At-a-Glance
@@ -156,28 +156,28 @@ _"If you need X, expect to pay Y more"_
 
 ### Line Items - Required Services (Always Deployed)
 
-| Category      | Service                 | SKU / Meter               | Quantity / Units      | Est. Monthly |
-| ------------- | ----------------------- | ------------------------- | --------------------- | ------------ |
-| 🔒 Security   | Azure Bastion           | Developer                 | 730 hours             | **$0.00**    |
-| 🌐 Networking | NAT Gateway             | Standard - Gateway        | 730 hours @ $0.045/hr | **$32.85**   |
-| 🌐 Networking | NAT Gateway             | Standard - Data Processed | ~10 GB @ $0.045/GB    | **$0.45**    |
-| 🌐 Networking | Hub VNet                | Standard                  | 1 VNet                | **$0.00**    |
-| 🌐 Networking | Spoke VNet              | Standard                  | 1 VNet                | **$0.00**    |
-| 🌐 Networking | NSG                     | Standard                  | 2 NSGs                | **$0.00**    |
-| 🔒 Security   | Private DNS Zone        | Standard                  | 1 zone                | **$0.50**    |
-| � Security   | Key Vault               | Standard                  | 1 vault (low usage)   | **$0.00**    |
-| 🔧 Operations | Automation Account      | Basic                     | <500 min/mo (free)    | **$0.00**    |
+| Category       | Service                 | SKU / Meter               | Quantity / Units      | Est. Monthly |
+| -------------- | ----------------------- | ------------------------- | --------------------- | ------------ |
+| 🔒 Security    | Azure Bastion           | Developer                 | 730 hours             | **$0.00**    |
+| 🌐 Networking  | NAT Gateway             | Standard - Gateway        | 730 hours @ $0.045/hr | **$32.85**   |
+| 🌐 Networking  | NAT Gateway             | Standard - Data Processed | ~10 GB @ $0.045/GB    | **$0.45**    |
+| 🌐 Networking  | Hub VNet                | Standard                  | 1 VNet                | **$0.00**    |
+| 🌐 Networking  | Spoke VNet              | Standard                  | 1 VNet                | **$0.00**    |
+| 🌐 Networking  | NSG                     | Standard                  | 2 NSGs                | **$0.00**    |
+| 🔒 Security    | Private DNS Zone        | Standard                  | 1 zone                | **$0.50**    |
+| � Security     | Key Vault               | Standard                  | 1 vault (low usage)   | **$0.00**    |
+| 🔧 Operations  | Automation Account      | Basic                     | <500 min/mo (free)    | **$0.00**    |
 | �📊 Monitoring | Log Analytics           | Per-GB Ingestion          | ~15 GB @ $2.76/GB     | **$10.00**   |
-| 📊 Monitoring | Log Analytics           | Data Retention            | 30 days (free)        | **$0.00**    |
-| 💾 Backup     | Recovery Services Vault | Standard LRS              | 1 vault (base)        | **$5.00**    |
-| 🛡️ Security   | Defender for Cloud      | Free tier                 | 1 subscription        | **$0.00**    |
-| 🔒 Security   | Key Vault               | Standard                  | 1 vault               | **$0.00**    |
-| 🔧 Automation | Automation Account      | Basic                     | 1 account             | **$0.00**    |
-| 🔒 Security   | Key Vault               | Standard                  | 1 vault (low usage)   | **$0.00**    |
-| 🔧 Operations | Automation Account      | Basic                     | <500 min/mo (free)    | **$0.00**    |
-| 💰 Governance | Cost Management         | Budget + Alerts           | 1 budget              | **$0.00**    |
-| 🔄 Migration  | Azure Migrate           | Assessment                | 1 project             | **$0.00**    |
-|               |                         |                           | **BASELINE TOTAL**    | **~$48.80**  |
+| 📊 Monitoring  | Log Analytics           | Data Retention            | 30 days (free)        | **$0.00**    |
+| 💾 Backup      | Recovery Services Vault | Standard LRS              | 1 vault (base)        | **$5.00**    |
+| 🛡️ Security    | Defender for Cloud      | Free tier                 | 1 subscription        | **$0.00**    |
+| 🔒 Security    | Key Vault               | Standard                  | 1 vault               | **$0.00**    |
+| 🔧 Automation  | Automation Account      | Basic                     | 1 account             | **$0.00**    |
+| 🔒 Security    | Key Vault               | Standard                  | 1 vault (low usage)   | **$0.00**    |
+| 🔧 Operations  | Automation Account      | Basic                     | <500 min/mo (free)    | **$0.00**    |
+| 💰 Governance  | Cost Management         | Budget + Alerts           | 1 budget              | **$0.00**    |
+| 🔄 Migration   | Azure Migrate           | Assessment                | 1 project             | **$0.00**    |
+|                |                         |                           | **BASELINE TOTAL**    | **~$48.80**  |
 
 > **Note**: Key Vault is free for low usage (first 10,000 operations/month included).
 > Automation Account includes 500 minutes/month free.

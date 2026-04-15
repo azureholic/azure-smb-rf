@@ -83,7 +83,7 @@ This architecture delivers a **cost-optimized, repeatable Azure SMB Ready Founda
 | 💰 Cost Optimization      | 9/10  | High       | Excellent - free tiers, caps, budget alerts, minimal baseline          |
 | 🔧 Operational Excellence | 7/10  | High       | Good automation via Bicep; Log Analytics for visibility; policy-driven |
 
-**Primary Pillar Optimized**: 💰 Cost Optimization  
+**Primary Pillar Optimized**: 💰 Cost Optimization
 **Trade-offs Accepted**: Reliability (no zone redundancy, no SLA), Performance (VM SKU restrictions)
 
 ---

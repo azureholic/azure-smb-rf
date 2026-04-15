@@ -59,14 +59,14 @@ infra/bicep/smb-ready-foundation/
 
 ### Resource Groups (6)
 
-| Resource Group | Name Pattern                | Module                |
-| -------------- | --------------------------- | --------------------- |
-| Hub            | rg-hub-{env}-{region}       | resource-groups.bicep |
-| Spoke          | rg-spoke-{env}-{region}     | resource-groups.bicep |
-| Monitor        | rg-monitor-{env}-{region}   | resource-groups.bicep |
-| Backup         | rg-backup-{env}-{region}    | resource-groups.bicep |
-| Migrate        | rg-migrate-{env}-{region}   | resource-groups.bicep |
-| Security       | rg-security-{env}-{region}  | resource-groups.bicep |
+| Resource Group | Name Pattern               | Module                |
+| -------------- | -------------------------- | --------------------- |
+| Hub            | rg-hub-{env}-{region}      | resource-groups.bicep |
+| Spoke          | rg-spoke-{env}-{region}    | resource-groups.bicep |
+| Monitor        | rg-monitor-{env}-{region}  | resource-groups.bicep |
+| Backup         | rg-backup-{env}-{region}   | resource-groups.bicep |
+| Migrate        | rg-migrate-{env}-{region}  | resource-groups.bicep |
+| Security       | rg-security-{env}-{region} | resource-groups.bicep |
 
 ### Core Infrastructure
 
@@ -124,7 +124,7 @@ All applicable modules have been migrated to Azure Verified Modules (AVM) for im
 | budget.bicep             | N/A                                                 | -       | ⚠️ Raw (sub-scope) |
 | policy-\*.bicep          | N/A                                                 | -       | ⚠️ Raw (native)    |
 | keyvault.bicep           | `br/public:avm/res/key-vault/vault`                 | 0.11.0  | ✅ AVM             |
-| automation.bicep         | `br/public:avm/res/automation/automation-account`    | 0.11.0  | ✅ AVM             |
+| automation.bicep         | `br/public:avm/res/automation/automation-account`   | 0.11.0  | ✅ AVM             |
 
 **Key Pattern**: Public IPs are pre-created before the firewall to avoid transient provisioning
 failures. See [ADR-0003](07-ab-adr-0003-avm-firewall-migration.md) for details.

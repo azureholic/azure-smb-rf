@@ -25,158 +25,158 @@
 
 ### 🌐 Networking Resources
 
-| Name                  | Type                      | Configuration          | Location       |
-| --------------------- | ------------------------- | ---------------------- | -------------- |
-| vnet-hub-smb-swc      | Virtual Network           | 10.0.0.0/23            | swedencentral  |
-| vnet-spoke-prod-swc   | Virtual Network           | 10.0.2.0/23            | swedencentral  |
-| nsg-hub-smb-swc       | Network Security Group    | Deny all inbound       | swedencentral  |
-| nsg-spoke-prod-swc    | Network Security Group    | VNet + LB allowed      | swedencentral  |
-| fw-hub-smb-swc        | Azure Firewall            | Basic SKU (Full only)  | swedencentral  |
-| fwpol-hub-smb-swc     | Firewall Policy           | Network rules          | swedencentral  |
-| vpng-hub-smb-swc      | VPN Gateway               | VpnGw1AZ (VPN only)    | swedencentral  |
-| pip-fw-smb-swc        | Public IP                 | Standard SKU, Zone 1,2,3 | swedencentral |
-| pip-fw-mgmt-smb-swc   | Public IP                 | Firewall management    | swedencentral  |
-| pip-vpn-smb-swc       | Public IP                 | VPN Gateway            | swedencentral  |
-| nat-spoke-prod-swc    | NAT Gateway               | Standard SKU (Baseline)| swedencentral  |
-| rt-spoke-smb-swc      | Route Table               | 0.0.0.0/0 → Firewall   | swedencentral  |
-| rt-gateway-smb-swc    | Route Table               | Spoke routes → Firewall| swedencentral  |
-| privatelink.azure.com | Private DNS Zone          | Auto-registration      | Global         |
-| privatelink.vaultcore.azure.net | Private DNS Zone | Key Vault PE resolution| Global         |
-| hub-spoke-peer        | VNet Peering              | Gateway Transit        | swedencentral  |
+| Name                            | Type                   | Configuration            | Location      |
+| ------------------------------- | ---------------------- | ------------------------ | ------------- |
+| vnet-hub-smb-swc                | Virtual Network        | 10.0.0.0/23              | swedencentral |
+| vnet-spoke-prod-swc             | Virtual Network        | 10.0.2.0/23              | swedencentral |
+| nsg-hub-smb-swc                 | Network Security Group | Deny all inbound         | swedencentral |
+| nsg-spoke-prod-swc              | Network Security Group | VNet + LB allowed        | swedencentral |
+| fw-hub-smb-swc                  | Azure Firewall         | Basic SKU (Full only)    | swedencentral |
+| fwpol-hub-smb-swc               | Firewall Policy        | Network rules            | swedencentral |
+| vpng-hub-smb-swc                | VPN Gateway            | VpnGw1AZ (VPN only)      | swedencentral |
+| pip-fw-smb-swc                  | Public IP              | Standard SKU, Zone 1,2,3 | swedencentral |
+| pip-fw-mgmt-smb-swc             | Public IP              | Firewall management      | swedencentral |
+| pip-vpn-smb-swc                 | Public IP              | VPN Gateway              | swedencentral |
+| nat-spoke-prod-swc              | NAT Gateway            | Standard SKU (Baseline)  | swedencentral |
+| rt-spoke-smb-swc                | Route Table            | 0.0.0.0/0 → Firewall     | swedencentral |
+| rt-gateway-smb-swc              | Route Table            | Spoke routes → Firewall  | swedencentral |
+| privatelink.azure.com           | Private DNS Zone       | Auto-registration        | Global        |
+| privatelink.vaultcore.azure.net | Private DNS Zone       | Key Vault PE resolution  | Global        |
+| hub-spoke-peer                  | VNet Peering           | Gateway Transit          | swedencentral |
 
 ### Hub VNet Subnets
 
-| Subnet                        | Address Range   | Purpose                     |
-| ----------------------------- | --------------- | --------------------------- |
-| AzureFirewallSubnet           | 10.0.0.0/26     | Azure Firewall data plane   |
-| AzureFirewallManagementSubnet | 10.0.0.64/26    | Azure Firewall management   |
-| snet-management               | 10.0.0.128/26   | Management VMs              |
-| GatewaySubnet                 | 10.0.0.192/27   | VPN Gateway                 |
-| AzureBastionSubnet            | 10.0.0.224/27   | Azure Bastion Developer     |
+| Subnet                        | Address Range | Purpose                   |
+| ----------------------------- | ------------- | ------------------------- |
+| AzureFirewallSubnet           | 10.0.0.0/26   | Azure Firewall data plane |
+| AzureFirewallManagementSubnet | 10.0.0.64/26  | Azure Firewall management |
+| snet-management               | 10.0.0.128/26 | Management VMs            |
+| GatewaySubnet                 | 10.0.0.192/27 | VPN Gateway               |
+| AzureBastionSubnet            | 10.0.0.224/27 | Azure Bastion Developer   |
 
 ### Spoke VNet Subnets
 
-| Subnet        | Address Range   | Purpose           | UDR Applied |
-| ------------- | --------------- | ----------------- | ----------- |
-| snet-workload | 10.0.2.0/25     | General workloads | ✅          |
-| snet-data     | 10.0.2.128/25   | Database/storage  | ✅          |
-| snet-app      | 10.0.3.0/25     | Application tier  | ✅          |
-| snet-pep      | 10.0.3.128/26   | Private endpoints | ➖          |
+| Subnet        | Address Range | Purpose           | UDR Applied |
+| ------------- | ------------- | ----------------- | ----------- |
+| snet-workload | 10.0.2.0/25   | General workloads | ✅          |
+| snet-data     | 10.0.2.128/25 | Database/storage  | ✅          |
+| snet-app      | 10.0.3.0/25   | Application tier  | ✅          |
+| snet-pep      | 10.0.3.128/26 | Private endpoints | ➖          |
 
 ### 📊 Monitoring Resources
 
-| Name              | Type                    | Retention  | Location      |
-| ----------------- | ----------------------- | ---------- | ------------- |
-| log-smbrf-smb-swc | Log Analytics Workspace | 30 days    | swedencentral |
-| aa-smbrf-smb-swc  | Automation Account      | Basic SKU  | swedencentral |
-| budget-smb     | Cost Management Budget  | Monthly    | Subscription  |
+| Name              | Type                    | Retention | Location      |
+| ----------------- | ----------------------- | --------- | ------------- |
+| log-smbrf-smb-swc | Log Analytics Workspace | 30 days   | swedencentral |
+| aa-smbrf-smb-swc  | Automation Account      | Basic SKU | swedencentral |
+| budget-smb        | Cost Management Budget  | Monthly   | Subscription  |
 
 **Log Analytics Configuration:**
 
-| Setting              | Value         |
-| -------------------- | ------------- |
-| Daily Cap            | 500 MB        |
-| Retention            | 30 days       |
-| SKU                  | PerGB2018     |
-| Defender Integration | Free tier     |
+| Setting              | Value     |
+| -------------------- | --------- |
+| Daily Cap            | 500 MB    |
+| Retention            | 30 days   |
+| SKU                  | PerGB2018 |
+| Defender Integration | Free tier |
 
 ### 💾 Backup & Recovery Resources
 
-| Name                 | Type                    | Configuration        | Location      |
-| -------------------- | ----------------------- | -------------------- | ------------- |
-| rsv-smbrf-smb-swc    | Recovery Services Vault | DefaultVMPolicy      | swedencentral |
-| migrate-smbrf-smb-swc| Azure Migrate Project   | Server assessment    | swedencentral |
+| Name                  | Type                    | Configuration     | Location      |
+| --------------------- | ----------------------- | ----------------- | ------------- |
+| rsv-smbrf-smb-swc     | Recovery Services Vault | DefaultVMPolicy   | swedencentral |
+| migrate-smbrf-smb-swc | Azure Migrate Project   | Server assessment | swedencentral |
 
 **VM Backup Policy:**
 
-| Setting               | Value                     |
-| --------------------- | ------------------------- |
-| Schedule              | Daily @ 02:00 UTC         |
-| Daily Retention       | 30 days                   |
-| Weekly Retention      | 12 weeks (Sunday)         |
-| Monthly Retention     | 12 months (1st of month)  |
-| Auto-Enrollment Tag   | `Backup: true`            |
+| Setting             | Value                    |
+| ------------------- | ------------------------ |
+| Schedule            | Daily @ 02:00 UTC        |
+| Daily Retention     | 30 days                  |
+| Weekly Retention    | 12 weeks (Sunday)        |
+| Monthly Retention   | 12 months (1st of month) |
+| Auto-Enrollment Tag | `Backup: true`           |
 
 ### 🔐 Security Resources (Policy Assignments)
 
-| Policy Name          | Effect           | Scope        | Purpose                      |
-| -------------------- | ---------------- | ------------ | ---------------------------- |
-| smb-compute-01    | Deny             | Subscription | Allowed VM SKUs (B/D/E only) |
-| smb-compute-02    | Deny             | Subscription | No public IPs on VMs         |
-| smb-compute-03    | Deny             | Subscription | Managed disks only           |
-| smb-network-01    | Audit            | Subscription | NSG required on subnets      |
-| smb-network-02    | Deny             | Subscription | No IP forwarding             |
-| smb-network-03    | Deny             | Subscription | Management ports closed      |
-| smb-storage-01    | Deny             | Subscription | HTTPS only                   |
-| smb-storage-02    | Deny             | Subscription | No public blob access        |
-| smb-storage-03    | Deny             | Subscription | TLS 1.2+ required            |
-| smb-identity-01   | Deny             | Subscription | Azure AD-only SQL auth       |
-| smb-identity-02   | Deny             | Subscription | No classic resources         |
-| smb-compliance-01 | Audit            | Subscription | Required tags                |
-| smb-compliance-02 | Deny             | Subscription | Allowed locations            |
-| smb-backup-01     | AuditIfNotExists | Subscription | Backup audit                 |
-| smb-backup-02     | DeployIfNotExists| Subscription | Auto-backup enrollment       |
-| smb-backup-03     | Audit            | Subscription | Storage geo-redundancy       |
-| smb-kv-01         | Audit            | Subscription | Key Vault soft delete        |
-| smb-kv-02         | Audit            | Subscription | Key Vault deletion protection|
-| smb-kv-03         | Audit            | Subscription | Key Vault RBAC model         |
-| smb-kv-04         | Audit            | Subscription | Key Vault no public network  |
-| smb-kv-05         | Audit            | Subscription | KV secrets expiration        |
-| smb-kv-06         | Audit            | Subscription | KV keys expiration           |
-| smb-kv-07         | AuditIfNotExists | Subscription | KV resource logs enabled     |
-| smb-network-05    | AuditIfNotExists | Subscription | NSG flow logs required       |
-| smb-compute-05    | AuditIfNotExists | Subscription | System updates on VMs        |
-| smb-compute-06    | AuditIfNotExists | Subscription | Endpoint protection on VMs   |
-| smb-identity-03   | AuditIfNotExists | Subscription | MFA for subscription owners  |
-| smb-identity-04   | AuditIfNotExists | Subscription | Deprecated accounts audit    |
+| Policy Name       | Effect            | Scope        | Purpose                       |
+| ----------------- | ----------------- | ------------ | ----------------------------- |
+| smb-compute-01    | Deny              | Subscription | Allowed VM SKUs (B/D/E only)  |
+| smb-compute-02    | Deny              | Subscription | No public IPs on VMs          |
+| smb-compute-03    | Deny              | Subscription | Managed disks only            |
+| smb-network-01    | Audit             | Subscription | NSG required on subnets       |
+| smb-network-02    | Deny              | Subscription | No IP forwarding              |
+| smb-network-03    | Deny              | Subscription | Management ports closed       |
+| smb-storage-01    | Deny              | Subscription | HTTPS only                    |
+| smb-storage-02    | Deny              | Subscription | No public blob access         |
+| smb-storage-03    | Deny              | Subscription | TLS 1.2+ required             |
+| smb-identity-01   | Deny              | Subscription | Azure AD-only SQL auth        |
+| smb-identity-02   | Deny              | Subscription | No classic resources          |
+| smb-compliance-01 | Audit             | Subscription | Required tags                 |
+| smb-compliance-02 | Deny              | Subscription | Allowed locations             |
+| smb-backup-01     | AuditIfNotExists  | Subscription | Backup audit                  |
+| smb-backup-02     | DeployIfNotExists | Subscription | Auto-backup enrollment        |
+| smb-backup-03     | Audit             | Subscription | Storage geo-redundancy        |
+| smb-kv-01         | Audit             | Subscription | Key Vault soft delete         |
+| smb-kv-02         | Audit             | Subscription | Key Vault deletion protection |
+| smb-kv-03         | Audit             | Subscription | Key Vault RBAC model          |
+| smb-kv-04         | Audit             | Subscription | Key Vault no public network   |
+| smb-kv-05         | Audit             | Subscription | KV secrets expiration         |
+| smb-kv-06         | Audit             | Subscription | KV keys expiration            |
+| smb-kv-07         | AuditIfNotExists  | Subscription | KV resource logs enabled      |
+| smb-network-05    | AuditIfNotExists  | Subscription | NSG flow logs required        |
+| smb-compute-05    | AuditIfNotExists  | Subscription | System updates on VMs         |
+| smb-compute-06    | AuditIfNotExists  | Subscription | Endpoint protection on VMs    |
+| smb-identity-03   | AuditIfNotExists  | Subscription | MFA for subscription owners   |
+| smb-identity-04   | AuditIfNotExists  | Subscription | Deprecated accounts audit     |
 
 ### 🔑 Security Services
 
-| Name                    | Type                    | Configuration              | Location      |
-| ----------------------- | ----------------------- | -------------------------- | ------------- |
-| kv-smbrf-swc-*          | Azure Key Vault         | Standard, RBAC, PE, purge  | swedencentral |
-| pep-kv-smbrf-smb-swc    | Private Endpoint        | Key Vault → spoke snet-pep | swedencentral |
-| Defender for Cloud       | Security Configuration  | Free tier (VMs, Storage, KV)| Subscription |
+| Name                 | Type                   | Configuration                | Location      |
+| -------------------- | ---------------------- | ---------------------------- | ------------- |
+| kv-smbrf-swc-\*      | Azure Key Vault        | Standard, RBAC, PE, purge    | swedencentral |
+| pep-kv-smbrf-smb-swc | Private Endpoint       | Key Vault → spoke snet-pep   | swedencentral |
+| Defender for Cloud   | Security Configuration | Free tier (VMs, Storage, KV) | Subscription  |
 
 **Key Vault Configuration:**
 
-| Setting              | Value                          |
-| -------------------- | ------------------------------ |
-| SKU                  | Standard                       |
-| Permission Model     | RBAC (no access policies)      |
-| Soft Delete          | Enabled (90-day retention)     |
-| Purge Protection     | Enabled                        |
-| Public Network       | Disabled (PE only)             |
-| Network Bypass       | AzureServices                  |
-| Diagnostic Settings  | All logs → Log Analytics       |
+| Setting             | Value                      |
+| ------------------- | -------------------------- |
+| SKU                 | Standard                   |
+| Permission Model    | RBAC (no access policies)  |
+| Soft Delete         | Enabled (90-day retention) |
+| Purge Protection    | Enabled                    |
+| Public Network      | Disabled (PE only)         |
+| Network Bypass      | AzureServices              |
+| Diagnostic Settings | All logs → Log Analytics   |
 
 ### 📋 Governance (Resource Groups)
 
-| Resource Group       | Purpose          | Environment Tag | Location      |
-| -------------------- | ---------------- | --------------- | ------------- |
-| rg-hub-smb-swc       | Hub networking   | smb             | swedencentral |
-| rg-spoke-prod-swc    | Workload spoke   | prod            | swedencentral |
-| rg-monitor-smb-swc   | Monitoring       | smb             | swedencentral |
-| rg-backup-smb-swc    | Backup services  | smb             | swedencentral |
-| rg-migrate-smb-swc   | Migration tools  | smb             | swedencentral |
-| rg-security-smb-swc  | Security services| smb             | swedencentral |
+| Resource Group      | Purpose           | Environment Tag | Location      |
+| ------------------- | ----------------- | --------------- | ------------- |
+| rg-hub-smb-swc      | Hub networking    | smb             | swedencentral |
+| rg-spoke-prod-swc   | Workload spoke    | prod            | swedencentral |
+| rg-monitor-smb-swc  | Monitoring        | smb             | swedencentral |
+| rg-backup-smb-swc   | Backup services   | smb             | swedencentral |
+| rg-migrate-smb-swc  | Migration tools   | smb             | swedencentral |
+| rg-security-smb-swc | Security services | smb             | swedencentral |
 
 ---
 
 ## Cost by Resource
 
-| Resource Type         | Scenario: baseline | Scenario: firewall | Scenario: vpn | Scenario: full |
-| --------------------- | -----------------: | -----------------: | ------------: | -------------: |
-| NAT Gateway           |               $32  |                 -  |            -  |             -  |
-| Azure Firewall        |                 -  |              $274  |            -  |           $274 |
-| VPN Gateway (VpnGw1AZ)|                 -  |                 -  |         $138  |           $138 |
-| Log Analytics         |               $0   |               $0   |           $0  |            $0  |
-| Recovery Services     |               $0   |               $0   |           $0  |            $0  |
-| Public IPs            |               $4   |               $22  |          $11  |           $33  |
-| Key Vault             |               $0   |               $0   |           $0  |            $0  |
-| Automation Account    |               $0   |               $0   |           $0  |            $0  |
-| Other (VNets, NSGs)   |               $12  |               $40  |          $38  |           $31  |
-| **Monthly Total**     |           **$49**  |           **$337** |      **$188** |       **$477** |
+| Resource Type          | Scenario: baseline | Scenario: firewall | Scenario: vpn | Scenario: full |
+| ---------------------- | -----------------: | -----------------: | ------------: | -------------: |
+| NAT Gateway            |                $32 |                  - |             - |              - |
+| Azure Firewall         |                  - |               $274 |             - |           $274 |
+| VPN Gateway (VpnGw1AZ) |                  - |                  - |          $138 |           $138 |
+| Log Analytics          |                 $0 |                 $0 |            $0 |             $0 |
+| Recovery Services      |                 $0 |                 $0 |            $0 |             $0 |
+| Public IPs             |                 $4 |                $22 |           $11 |            $33 |
+| Key Vault              |                 $0 |                 $0 |            $0 |             $0 |
+| Automation Account     |                 $0 |                 $0 |            $0 |             $0 |
+| Other (VNets, NSGs)    |                $12 |                $40 |           $38 |            $31 |
+| **Monthly Total**      |            **$49** |           **$337** |      **$188** |       **$477** |
 
 ---
 

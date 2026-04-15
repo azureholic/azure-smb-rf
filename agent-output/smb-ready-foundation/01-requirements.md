@@ -6,10 +6,10 @@
 
 ## Project Overview
 
-**Project Name**: smb-ready-foundation  
-**Description**: Repeatable, single-subscription Azure environment optimized for on-premises workload migrations for SMB customers.  
-**Business Context**: Microsoft partner and infrastructure hosting provider with 1000+ SMB customers. Each customer has a handful of VMs. Building a repeatable, single-subscription Azure environment for on-premises to Azure migrations.  
-**Stakeholders**: Partner operations team, SMB customers  
+**Project Name**: smb-ready-foundation
+**Description**: Repeatable, single-subscription Azure environment optimized for on-premises workload migrations for SMB customers.
+**Business Context**: Microsoft partner and infrastructure hosting provider with 1000+ SMB customers. Each customer has a handful of VMs. Building a repeatable, single-subscription Azure environment for on-premises to Azure migrations.
+**Stakeholders**: Partner operations team, SMB customers
 **Target Deployment Date**: TBD
 
 ### Core Principles
@@ -25,14 +25,14 @@
 
 ### Resource Groups (Naming Conventions)
 
-| Purpose          | Name Pattern            | Description                                           |
-| ---------------- | ----------------------- | ----------------------------------------------------- |
-| Hub networking   | rg-hub-{region}-001     | Hub VNet, Bastion, Firewall, VPN Gateway, Private DNS |
-| Spoke networking | rg-spoke-{region}-001   | Spoke VNet, NAT Gateway, workload subnets             |
-| Azure Migrate    | rg-migrate-{region}-001 | Azure Migrate project for server assessment           |
-| Monitoring       | rg-monitor-{region}-001 | Log Analytics Workspace                               |
-| Backup           | rg-backup-{region}-001  | Recovery Services Vault                               |
-| Security         | rg-security-{region}-001| Key Vault, Automation Account, Defender for Cloud     |
+| Purpose          | Name Pattern             | Description                                           |
+| ---------------- | ------------------------ | ----------------------------------------------------- |
+| Hub networking   | rg-hub-{region}-001      | Hub VNet, Bastion, Firewall, VPN Gateway, Private DNS |
+| Spoke networking | rg-spoke-{region}-001    | Spoke VNet, NAT Gateway, workload subnets             |
+| Azure Migrate    | rg-migrate-{region}-001  | Azure Migrate project for server assessment           |
+| Monitoring       | rg-monitor-{region}-001  | Log Analytics Workspace                               |
+| Backup           | rg-backup-{region}-001   | Recovery Services Vault                               |
+| Security         | rg-security-{region}-001 | Key Vault, Automation Account, Defender for Cloud     |
 
 ### Network Architecture
 
@@ -111,7 +111,7 @@ All Bicep implementations MUST use Azure Verified Modules where available.
 | Recovery Vault   | `avm/res/recovery-services/vault`        | 0.11.1  | LRS + DefaultVMPolicy |
 | Budget           | `avm/res/consumption/budget`             | 0.3.8   | $500/mo alerts        |
 | Key Vault        | `avm/res/key-vault/vault`                | 0.11.0  | Private endpoint      |
-| Automation       | `avm/res/automation/automation-account`   | 0.11.0  | Runbook platform      |
+| Automation       | `avm/res/automation/automation-account`  | 0.11.0  | Runbook platform      |
 
 #### Baseline Scenario Additions
 
@@ -186,14 +186,14 @@ All Bicep implementations MUST use Azure Verified Modules where available.
 
 ### Policy Deployment Strategy
 
-| Aspect            | Decision                                                 |
-| ----------------- | -------------------------------------------------------- |
-| Deployment method | **Bicep** - `Microsoft.Authorization/policyAssignments`  |
-| Policy type       | Built-in definitions only (no custom policies)           |
-| Assignment scope  | Subscription level                                       |
-| Naming convention | `smb-{category}-{number}` (e.g., `smb-compute-01`) |
-| Metadata tags     | `Project: smb-ready-foundation`, `ManagedBy: Bicep`      |
-| Cleanup script    | `scripts/Remove-SmbReadyFoundationPolicies.ps1`          |
+| Aspect            | Decision                                                |
+| ----------------- | ------------------------------------------------------- |
+| Deployment method | **Bicep** - `Microsoft.Authorization/policyAssignments` |
+| Policy type       | Built-in definitions only (no custom policies)          |
+| Assignment scope  | Subscription level                                      |
+| Naming convention | `smb-{category}-{number}` (e.g., `smb-compute-01`)      |
+| Metadata tags     | `Project: smb-ready-foundation`, `ManagedBy: Bicep`     |
+| Cleanup script    | `scripts/Remove-SmbReadyFoundationPolicies.ps1`         |
 
 ### Mandatory Tags
 
@@ -343,16 +343,16 @@ All Bicep implementations MUST use Azure Verified Modules where available.
 
 The following items are explicitly excluded from this SMB Ready Foundation:
 
-| Item                       | Reason                                                  |
-| -------------------------- | ------------------------------------------------------- |
-| Key Vault                  | Now included in baseline with private endpoint       |
-| Azure Site Recovery        | Just Migrate project for assessment                     |
-| Zone redundancy            | Resilience not required; cost priority                  |
-| Custom DNS servers         | Use Azure Private DNS instead                           |
-| SLA/RTO/RPO targets        | Cost priority over resilience                           |
-| Multi-region deployment    | Single region only                                      |
-| ExpressRoute               | VPN Gateway optional for hybrid connectivity            |
-| Per-customer customization | Post-deployment configuration expected                  |
+| Item                       | Reason                                         |
+| -------------------------- | ---------------------------------------------- |
+| Key Vault                  | Now included in baseline with private endpoint |
+| Azure Site Recovery        | Just Migrate project for assessment            |
+| Zone redundancy            | Resilience not required; cost priority         |
+| Custom DNS servers         | Use Azure Private DNS instead                  |
+| SLA/RTO/RPO targets        | Cost priority over resilience                  |
+| Multi-region deployment    | Single region only                             |
+| ExpressRoute               | VPN Gateway optional for hybrid connectivity   |
+| Per-customer customization | Post-deployment configuration expected         |
 
 ## Summary for Architecture Assessment
 

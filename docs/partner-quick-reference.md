@@ -92,11 +92,11 @@ cd infra/bicep/smb-ready-foundation/scripts
 
 ## 🆘 Support
 
-| Issue                 | Solution                                                                       |
-| --------------------- | ------------------------------------------------------------------------------ |
-| Container won't start | Check Docker running, increase memory to 4GB+                                  |
-| Azure auth fails      | Try `az login --use-device-code`                                               |
-| Deployment fails      | Check subscription has Owner role                                              |
+| Issue                 | Solution                                                               |
+| --------------------- | ---------------------------------------------------------------------- |
+| Container won't start | Check Docker running, increase memory to 4GB+                          |
+| Azure auth fails      | Try `az login --use-device-code`                                       |
+| Deployment fails      | Check subscription has Owner role                                      |
 | Need help             | [Open an issue](https://github.com/jonathan-vella/azure-smb-rf/issues) |
 
 ---
