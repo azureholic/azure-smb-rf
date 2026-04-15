@@ -8,21 +8,23 @@
 
 ## Quick Reference
 
-| Item                | Value                                      |
-| ------------------- | ------------------------------------------ |
-| **Primary Region**  | swedencentral                              |
-| **Resource Groups** | rg-hub, rg-spoke, rg-monitor, rg-backup, rg-migrate |
-| **Support Contact** | Partner operations team                    |
-| **Escalation Path** | L1 → L2 → Microsoft Support               |
+| Item                | Value                                                            |
+| ------------------- | ---------------------------------------------------------------- |
+| **Primary Region**  | swedencentral                                                    |
+| **Resource Groups** | rg-hub, rg-spoke, rg-monitor, rg-backup, rg-migrate, rg-security |
+| **Support Contact** | Partner operations team                                          |
+| **Escalation Path** | L1 → L2 → Microsoft Support                                      |
 
 ### Critical Resources
 
-| Resource              | Name                | Resource Group    | Criticality |
-| --------------------- | ------------------- | ----------------- | ----------- |
-| Azure Firewall        | fw-hub-smb-swc      | rg-hub-smb-swc    | High        |
-| VPN Gateway           | vpng-hub-smb-swc    | rg-hub-smb-swc    | High        |
-| Log Analytics         | log-smbrf-smb-swc   | rg-monitor-smb-swc| Medium      |
-| Recovery Vault        | rsv-smbrf-smb-swc   | rg-backup-smb-swc | Medium      |
+| Resource           | Name              | Resource Group      | Criticality |
+| ------------------ | ----------------- | ------------------- | ----------- |
+| Azure Firewall     | fw-hub-smb-swc    | rg-hub-smb-swc      | High        |
+| VPN Gateway        | vpng-hub-smb-swc  | rg-hub-smb-swc      | High        |
+| Log Analytics      | log-smbrf-smb-swc | rg-monitor-smb-swc  | Medium      |
+| Recovery Vault     | rsv-smbrf-smb-swc | rg-backup-smb-swc   | Medium      |
+| Key Vault          | kv-smbrf-swc-\*   | rg-security-smb-swc | High        |
+| Automation Account | aa-smbrf-smb-swc  | rg-monitor-smb-swc  | Medium      |
 
 ---
 
@@ -37,6 +39,8 @@
 3. ✅ Check VPN Gateway status - connected (if applicable)
 4. ✅ Review Log Analytics ingestion - data flowing
 5. ✅ Check budget alerts - no overspend notifications
+6. ✅ Check Key Vault access - no denied requests in logs
+7. ✅ Check Automation Account - no failed runbook jobs
 
 **Azure Portal Quick Links:**
 
@@ -59,12 +63,12 @@ AzureDiagnostics
 
 **Priority Logs to Review:**
 
-| Log Source           | Query Focus              | Action Threshold |
-| -------------------- | ------------------------ | ---------------- |
-| Azure Firewall       | Denied connections       | >100/hour        |
-| NSG Flow Logs        | Unusual traffic patterns | Manual review    |
-| Azure AD Sign-ins    | Failed sign-ins          | >10/hour         |
-| Defender for Cloud   | Security alerts          | Any High/Critical|
+| Log Source         | Query Focus              | Action Threshold  |
+| ------------------ | ------------------------ | ----------------- |
+| Azure Firewall     | Denied connections       | >100/hour         |
+| NSG Flow Logs      | Unusual traffic patterns | Manual review     |
+| Azure AD Sign-ins  | Failed sign-ins          | >10/hour          |
+| Defender for Cloud | Security alerts          | Any High/Critical |
 
 **KQL Query - Firewall Denied Traffic:**
 
@@ -83,31 +87,31 @@ AzureDiagnostics
 
 ### 2.1 Severity Definitions
 
-| Severity | Definition                                  | Response Time | Escalation   |
-| -------- | ------------------------------------------- | ------------- | ------------ |
-| P1       | Complete service outage, no workaround      | 15 minutes    | Immediate    |
-| P2       | Major feature unavailable, workaround exists| 1 hour        | Within 2 hrs |
-| P3       | Minor issue, service functional             | 4 hours       | Next day     |
-| P4       | Cosmetic/documentation issue                | Best effort   | None         |
+| Severity | Definition                                   | Response Time | Escalation   |
+| -------- | -------------------------------------------- | ------------- | ------------ |
+| P1       | Complete service outage, no workaround       | 15 minutes    | Immediate    |
+| P2       | Major feature unavailable, workaround exists | 1 hour        | Within 2 hrs |
+| P3       | Minor issue, service functional              | 4 hours       | Next day     |
+| P4       | Cosmetic/documentation issue                 | Best effort   | None         |
 
 ### 2.2 Runbooks by Alert
 
-| Alert                          | Runbook                           | Owner      |
-| ------------------------------ | --------------------------------- | ---------- |
-| Azure Firewall Down            | [Firewall Recovery](#31-restart-azure-firewall) | Network   |
-| VPN Gateway Disconnected       | [VPN Troubleshooting](#32-vpn-gateway-troubleshooting) | Network |
-| High Log Ingestion             | [Log Analytics Throttling](#33-log-analytics-cap) | Platform |
-| Budget Threshold Exceeded      | [Cost Review](#34-budget-alert-response) | Finance |
-| Backup Job Failed              | [Backup Recovery](#35-backup-job-failure) | Platform |
+| Alert                     | Runbook                                                | Owner    |
+| ------------------------- | ------------------------------------------------------ | -------- |
+| Azure Firewall Down       | [Firewall Recovery](#31-restart-azure-firewall)        | Network  |
+| VPN Gateway Disconnected  | [VPN Troubleshooting](#32-vpn-gateway-troubleshooting) | Network  |
+| High Log Ingestion        | [Log Analytics Throttling](#33-log-analytics-cap)      | Platform |
+| Budget Threshold Exceeded | [Cost Review](#34-budget-alert-response)               | Finance  |
+| Backup Job Failed         | [Backup Recovery](#35-backup-job-failure)              | Platform |
 
 ### 2.3 Common Error Codes
 
-| Error Code | Meaning | Resolution |
-|------------|---------|------------|
-| `AnotherOperationInProgress` | Resource locked by concurrent operation | Wait 5-10 min, retry |
-| `InternalServerError` | Azure platform issue | Check Service Health, retry |
-| `QuotaExceeded` | Subscription limit reached | Request quota increase |
-| `ResourceNotFound` | Resource deleted or moved | Verify resource exists |
+| Error Code                   | Meaning                                 | Resolution                  |
+| ---------------------------- | --------------------------------------- | --------------------------- |
+| `AnotherOperationInProgress` | Resource locked by concurrent operation | Wait 5-10 min, retry        |
+| `InternalServerError`        | Azure platform issue                    | Check Service Health, retry |
+| `QuotaExceeded`              | Subscription limit reached              | Request quota increase      |
+| `ResourceNotFound`           | Resource deleted or moved               | Verify resource exists      |
 
 ---
 
@@ -195,22 +199,22 @@ Backup-AzRecoveryServicesBackupItem -Item $item
 
 ### 4.1 Scheduled Maintenance
 
-| Task                      | Frequency | Window           | Impact        |
-| ------------------------- | --------- | ---------------- | ------------- |
-| Azure Firewall updates    | Monthly   | Auto (Microsoft) | None          |
-| VPN Gateway maintenance   | Quarterly | Auto (Microsoft) | Brief drops   |
-| Policy compliance scan    | Daily     | 03:00 UTC        | None          |
-| Backup jobs               | Daily     | 02:00 UTC        | None          |
-| Log Analytics purge       | Daily     | Automatic        | None          |
+| Task                    | Frequency | Window           | Impact      |
+| ----------------------- | --------- | ---------------- | ----------- |
+| Azure Firewall updates  | Monthly   | Auto (Microsoft) | None        |
+| VPN Gateway maintenance | Quarterly | Auto (Microsoft) | Brief drops |
+| Policy compliance scan  | Daily     | 03:00 UTC        | None        |
+| Backup jobs             | Daily     | 02:00 UTC        | None        |
+| Log Analytics purge     | Daily     | Automatic        | None        |
 
 ### 4.2 Change Management
 
-| Change Type             | Approval Required | Lead Time    |
-| ----------------------- | ----------------- | ------------ |
-| Policy modification     | Yes (Security)    | 48 hours     |
-| Network rule change     | Yes (Network)     | 24 hours     |
-| Scenario upgrade        | Yes (Finance)     | 24 hours     |
-| Emergency hotfix        | Verbal (post-hoc) | Immediate    |
+| Change Type         | Approval Required | Lead Time |
+| ------------------- | ----------------- | --------- |
+| Policy modification | Yes (Security)    | 48 hours  |
+| Network rule change | Yes (Network)     | 24 hours  |
+| Scenario upgrade    | Yes (Finance)     | 24 hours  |
+| Emergency hotfix    | Verbal (post-hoc) | Immediate |
 
 ---
 
@@ -218,31 +222,64 @@ Backup-AzRecoveryServicesBackupItem -Item $item
 
 ### 5.1 Internal Contacts
 
-| Role                    | Team            | Contact        |
-| ----------------------- | --------------- | -------------- |
-| Platform Owner          | Partner Team    | {owner-email}  |
-| Security Officer        | Partner Team    | {security-email}|
-| Finance Approver        | Partner Team    | {finance-email}|
+| Role             | Team         | Contact          |
+| ---------------- | ------------ | ---------------- |
+| Platform Owner   | Partner Team | {owner-email}    |
+| Security Officer | Partner Team | {security-email} |
+| Finance Approver | Partner Team | {finance-email}  |
 
 ### 5.2 Microsoft Support
 
-| Support Level | When to Engage | SLA |
-|---------------|----------------|-----|
-| Azure Support (Basic) | Service Health issues | Best effort |
-| Azure Support (Standard) | P1/P2 incidents | 1 hour response |
-| Premier Support | Complex issues | 15 min response |
+| Support Level            | When to Engage        | SLA             |
+| ------------------------ | --------------------- | --------------- |
+| Azure Support (Basic)    | Service Health issues | Best effort     |
+| Azure Support (Standard) | P1/P2 incidents       | 1 hour response |
+| Premier Support          | Complex issues        | 15 min response |
 
 **Create Support Request:**
 [Azure Support](https://portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade)
 
 ---
 
-## 6. Change Log
+## 5.3 Key Vault Operations
 
-| Date       | Version | Change                              | Author       |
-| ---------- | ------- | ----------------------------------- | ------------ |
-| 2026-02-02 | 0.1     | Initial runbook creation            | docs agent   |
+### Secret Management
+
+**Adding a secret:**
+
+```bash
+az keyvault secret set --vault-name kv-smbrf-swc-<suffix> --name <secret-name> --value <value>
+```
+
+**Listing secrets:**
+
+```bash
+az keyvault secret list --vault-name kv-smbrf-swc-<suffix> -o table
+```
+
+### Access Troubleshooting
+
+| Symptom                | Cause                  | Resolution                                         |
+| ---------------------- | ---------------------- | -------------------------------------------------- |
+| 403 Forbidden          | Missing RBAC role      | Assign `Key Vault Secrets User` role               |
+| DNS resolution failure | PE DNS not configured  | Verify `privatelink.vaultcore.azure.net` zone      |
+| Public access denied   | Network rules blocking | Use PE from spoke VNet or add AzureServices bypass |
+
+### Purge Protection Awareness
+
+- Key Vault has **90-day** purge protection — deleted vaults cannot be permanently removed for 90 days
+- During teardown, `Remove-SmbReadyFoundation.ps1` Phase 4c attempts purge but will warn if purge protection blocks it
+- Key Vault name remains reserved during the 90-day retention period
 
 ---
 
-_Operations runbook generated by docs agent for SMB Ready Foundation v0.3.0._
+## 6. Change Log
+
+| Date       | Version | Change                                             | Author     |
+| ---------- | ------- | -------------------------------------------------- | ---------- |
+| 2026-02-02 | 0.1     | Initial runbook creation                           | docs agent |
+| 2026-04-15 | 0.2     | Added Key Vault, Automation, Defender, security RG | Copilot    |
+
+---
+
+_Operations runbook generated by docs agent for SMB Ready Foundation v0.4.0._

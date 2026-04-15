@@ -35,7 +35,7 @@ efficiency across 1000+ SMB customer deployments.
 - **Subscription-Scope Deployment**: Policies and budgets require subscription-level targeting
 - **Cross-Resource Group Dependencies**: Hub and spoke resources span multiple resource groups
 - **Conditional Resources**: Azure Firewall and VPN Gateway are optional per-customer
-- **Policy Enforcement**: 20 Azure Policies must deploy before any resources
+- **Policy Enforcement**: 33 Azure Policies must deploy before any resources
 - **Unique Naming**: Globally unique resources (Key Vault, Storage) need deterministic suffixes
 
 **Operational Forces:**
@@ -70,11 +70,11 @@ deployment order, and conditional resource patterns for optional services.
 
 ```
 Phase 1: Subscription Scope (parallel)
-├── policy-assignments.bicep (20 policies)
+├── policy-assignments.bicep (33 policies)
 └── budget.bicep (cost management)
 
 Phase 2: Foundation (serial)
-└── resource-groups.bicep (5 RGs)
+└── resource-groups.bicep (6 RGs)
 
 Phase 3: Core Networking (parallel)
 ├── networking-hub.bicep (VNet, Bastion, DNS)
@@ -120,8 +120,8 @@ var regionAbbreviations = {
 
 ### Policy Assignment Design
 
-| Category   | Count | Effect Mix         | Assignment Prefix            |
-| ---------- | ----- | ------------------ | ---------------------------- |
+| Category   | Count | Effect Mix         | Assignment Prefix         |
+| ---------- | ----- | ------------------ | ------------------------- |
 | Compute    | 4     | 2 Deny, 2 Audit    | `smb-compute-*`           |
 | Network    | 4     | 1 Deny, 3 Audit    | `smb-network-*`           |
 | Storage    | 5     | 3 Deny, 2 Audit    | `smb-storage-*`           |

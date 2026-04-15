@@ -56,11 +56,14 @@ cd infra/bicep/smb-ready-foundation
 - Hub + Spoke VNet topology
 - NAT Gateway (outbound internet)
 - Azure Bastion Developer (secure VM access)
-- Private DNS Zone (auto-registration)
+- Private DNS Zones (auto-registration + Key Vault PE)
 - Log Analytics (500 MB/day cap)
 - Recovery Services Vault (VM backup)
 - Azure Migrate Project
-- 20 Azure Policy guardrails
+- Azure Key Vault (RBAC, private endpoint, purge protection)
+- Azure Automation Account (patch management)
+- Microsoft Defender for Cloud (Free tier)
+- 34 Azure Policy guardrails
 - Monthly budget alert ($500)
 
 ### Scenario-Specific
@@ -89,11 +92,11 @@ cd infra/bicep/smb-ready-foundation/scripts
 
 ## 🆘 Support
 
-| Issue                 | Solution                                                                       |
-| --------------------- | ------------------------------------------------------------------------------ |
-| Container won't start | Check Docker running, increase memory to 4GB+                                  |
-| Azure auth fails      | Try `az login --use-device-code`                                               |
-| Deployment fails      | Check subscription has Owner role                                              |
+| Issue                 | Solution                                                               |
+| --------------------- | ---------------------------------------------------------------------- |
+| Container won't start | Check Docker running, increase memory to 4GB+                          |
+| Azure auth fails      | Try `az login --use-device-code`                                       |
+| Deployment fails      | Check subscription has Owner role                                      |
 | Need help             | [Open an issue](https://github.com/jonathan-vella/azure-smb-rf/issues) |
 
 ---
