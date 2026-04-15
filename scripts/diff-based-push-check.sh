@@ -55,6 +55,10 @@ run_check() {
   local cmd="$3"
   local slug="$4"
 
+  # Backgrounded function invocations run in subshells; clear the inherited
+  # EXIT trap so only the parent shell removes the shared temp directory.
+  trap - EXIT
+
   if [ "$count" -gt 0 ]; then
     if eval "$cmd" > /dev/null 2>&1; then
       echo "pass" > "$RESULTS_DIR/$slug"
@@ -73,7 +77,7 @@ run_check "Agent validation" "$AGENT_COUNT" "npm run validate:agents" "agents" &
 run_check "Instruction checks" "$INSTRUCTION_COUNT" "npm run validate:instruction-checks" "instructions" &
 run_check "Skills validation" "$SKILL_COUNT" "npm run validate:skills" "skills" &
 run_check "JSON syntax" "$JSON_COUNT" "npm run lint:json" "json" &
-run_check "Python lint" "$PY_COUNT" "npm run lint:python" "python" &
+run_check "Python lint" "$PY_COUNT" "PY_FILES=\$(printf '%s\n' \"\$CHANGED_FILES\" | grep -E '^(mcp/.*\\.py|scripts/.*\\.py)$' || true); if [[ -z \"\$PY_FILES\" ]]; then exit 0; fi; while IFS= read -r file; do ./.venv/bin/python -m py_compile \"\$file\"; done < <(printf '%s\n' \"\$PY_FILES\"); printf '%s\n' \"\$PY_FILES\" | xargs ./.venv/bin/python -m flake8 --select=E9,F63,F7,F82" "python" &
 run_check "Draw.io files" "$DRAWIO_COUNT" "npm run lint:drawio" "drawio" &
 
 wait

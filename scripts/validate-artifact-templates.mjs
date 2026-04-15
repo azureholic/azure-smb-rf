@@ -436,6 +436,11 @@ function validateCollapsibleBlocks(filePath, text, reportFn = warn) {
 function validateTemplate(artifactName) {
   const templatePath = TEMPLATES[artifactName];
 
+  if (!templatePath) {
+    // No template defined for this artifact — skip validation
+    return;
+  }
+
   if (!exists(templatePath)) {
     error(`Missing template file: ${templatePath}`, {
       filePath: templatePath,
