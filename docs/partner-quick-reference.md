@@ -6,13 +6,13 @@
 
 ## Prerequisites
 
-| Requirement | Minimum |
-|-------------|---------|
-| Azure subscription | Owner role |
-| Azure CLI | 2.60+ |
-| Azure Developer CLI (azd) | 1.9+ |
-| PowerShell | 7.4+ |
-| Management group | Create `smb-rf` under tenant root |
+| Requirement               | Minimum                           |
+| ------------------------- | --------------------------------- |
+| Azure subscription        | Owner role                        |
+| Azure CLI                 | 2.60+                             |
+| Azure Developer CLI (azd) | 1.9+                              |
+| PowerShell                | 7.4+                              |
+| Management group          | Create `smb-rf` under tenant root |
 
 ## Quick Deploy
 
@@ -44,23 +44,23 @@ azd up
 
 ## Scenarios
 
-| Scenario | Cost/month | NAT GW | Firewall | VPN GW | Peering |
-|----------|-----------|--------|----------|--------|---------|
-| **baseline** | ~$48 | ✅ | — | — | — |
-| **firewall** | ~$336 | — | ✅ | — | ✅ |
-| **vpn** | ~$187 | ✅ | — | ✅ | ✅ |
-| **full** | ~$476 | — | ✅ | ✅ | ✅ |
+| Scenario     | Cost/month | NAT GW | Firewall | VPN GW | Peering |
+| ------------ | ---------- | ------ | -------- | ------ | ------- |
+| **baseline** | ~$48       | ✅     | —        | —      | —       |
+| **firewall** | ~$336      | —      | ✅       | —      | ✅      |
+| **vpn**      | ~$187      | ✅     | —        | ✅     | ✅      |
+| **full**     | ~$476      | —      | ✅       | ✅     | ✅      |
 
 ## What Gets Deployed (All Scenarios)
 
-| Resource Group | Key Resources |
-|----------------|---------------|
-| `rg-hub-smb-swc` | Hub VNet, NSG, Private DNS, Bastion Developer |
-| `rg-spoke-prod-swc` | Spoke VNet, NSG, NAT GW or Route Table |
-| `rg-monitor-smb-swc` | Log Analytics (500MB cap), Automation Account |
-| `rg-backup-smb-swc` | Recovery Services Vault |
-| `rg-security-smb-swc` | Key Vault + Private Endpoint |
-| `rg-migrate-smb-swc` | Azure Migrate Project |
+| Resource Group        | Key Resources                                 |
+| --------------------- | --------------------------------------------- |
+| `rg-hub-smb-swc`      | Hub VNet, NSG, Private DNS, Bastion Developer |
+| `rg-spoke-prod-swc`   | Spoke VNet, NSG, NAT GW or Route Table        |
+| `rg-monitor-smb-swc`  | Log Analytics (500MB cap), Automation Account |
+| `rg-backup-smb-swc`   | Recovery Services Vault                       |
+| `rg-security-smb-swc` | Key Vault + Private Endpoint                  |
+| `rg-migrate-smb-swc`  | Azure Migrate Project                         |
 
 Plus: 33 MG-scoped policies, monthly budget ($500), Defender for Cloud (free CSPM).
 
@@ -96,16 +96,17 @@ pwsh scripts/Remove-SmbReadyFoundation.ps1 -Force -RemoveManagementGroup
 
 ## Useful Links
 
-| Resource | Link |
-|----------|------|
-| Full documentation | [User Guide](site/src/content/docs/getting-started/quick-start.mdx) |
-| Configuration reference | [Parameters](site/src/content/docs/deploying/configuration.mdx) |
-| Policy catalog | [33 Policies](site/src/content/docs/reference/policies.mdx) |
-| Troubleshooting | [Common Issues](site/src/content/docs/operating/troubleshooting.mdx) |
-| Source repository | [GitHub](https://github.com/jonathan-vella/azure-smb-rf) |
+| Resource                | Link                                                                 |
+| ----------------------- | -------------------------------------------------------------------- |
+| Full documentation      | [User Guide](site/src/content/docs/getting-started/quick-start.mdx)  |
+| Configuration reference | [Parameters](site/src/content/docs/deploying/configuration.mdx)      |
+| Policy catalog          | [33 Policies](site/src/content/docs/reference/policies.mdx)          |
+| Troubleshooting         | [Common Issues](site/src/content/docs/operating/troubleshooting.mdx) |
+| Source repository       | [GitHub](https://github.com/jonathan-vella/azure-smb-rf)             |
+
 # Partner Quick Reference Card
 
-> **Azure SMB Ready Foundation v0.3.0** | Single-page deployment guide for Microsoft Partners
+> **Azure SMB Ready Foundation v0.10.0** | Single-page deployment guide for Microsoft Partners
 
 ---
 
@@ -166,7 +167,7 @@ azd up                              # Deploys MG policies + subscription infra
 
 - Hub + Spoke VNet topology
 - NAT Gateway (outbound internet)
-- Azure Bastion Developer (secure VM access)
+- Azure Bastion Developer (portal-based VM access — no infrastructure deployed)
 - Private DNS Zones (auto-registration + Key Vault PE)
 - Log Analytics (500 MB/day cap)
 - Recovery Services Vault (VM backup)
@@ -174,7 +175,7 @@ azd up                              # Deploys MG policies + subscription infra
 - Azure Key Vault (RBAC, private endpoint, purge protection)
 - Azure Automation Account (patch management)
 - Microsoft Defender for Cloud (Free tier)
-- 34 Azure Policy guardrails (30 at MG scope, 3+1 at subscription scope)
+- 33 Azure Policy guardrails (30 at MG scope, 3 at subscription scope)
 - Monthly budget alert ($500)
 
 ### Scenario-Specific

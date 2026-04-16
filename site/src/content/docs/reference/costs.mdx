@@ -6,73 +6,80 @@ description: Monthly cost estimates for all deployment scenarios
 import { Aside } from "@astrojs/starlight/components";
 
 <Aside type="tip">
-  Estimates are for Sweden Central (swedencentral) as of 2026. Use the [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/) for current pricing.
+  Estimates are for Sweden Central (swedencentral) as of 2026. Use the [Azure
+  Pricing Calculator](https://azure.microsoft.com/pricing/calculator/) for
+  current pricing.
 </Aside>
 
 ## Monthly Cost by Scenario
 
-| Scenario | Estimated Monthly Cost | Primary Cost Driver |
-|----------|----------------------|---------------------|
-| **Baseline** | **~$48** | NAT Gateway |
-| **VPN** | **~$187** | VPN Gateway (VpnGw1) |
-| **Firewall** | **~$336** | Azure Firewall (Basic) |
-| **Full** | **~$476** | Firewall + VPN Gateway |
+| Scenario     | Estimated Monthly Cost | Primary Cost Driver    |
+| ------------ | ---------------------- | ---------------------- |
+| **Baseline** | **~$48**               | NAT Gateway            |
+| **VPN**      | **~$187**              | VPN Gateway (VpnGw1AZ) |
+| **Firewall** | **~$336**              | Azure Firewall (Basic) |
+| **Full**     | **~$476**              | Firewall + VPN Gateway |
 
 ## Detailed Breakdown
 
 ### Always-On Resources (All Scenarios)
 
-| Resource | Type | Monthly Cost |
-|----------|------|-------------|
-| Log Analytics Workspace | 500MB/day free tier | $0 |
-| Automation Account (Basic) | Included | $0 |
-| Recovery Services Vault | No backups configured | $0 |
-| Key Vault (Standard) | Minimal operations | ~$5 |
-| Private Endpoint | Inbound data | ~$3 |
-| Azure Bastion Developer | Free tier | $0 |
-| Defender for Cloud | Free CSPM | $0 |
-| Azure Migrate | Free | $0 |
-| Budget (consumption) | Free | $0 |
-| **Subtotal** | | **~$8** |
+| Resource                   | Type                  | Monthly Cost |
+| -------------------------- | --------------------- | ------------ |
+| Log Analytics Workspace    | 500MB/day free tier   | $0           |
+| Automation Account (Basic) | Included              | $0           |
+| Recovery Services Vault    | No backups configured | $0           |
+| Key Vault (Standard)       | Minimal operations    | ~$5          |
+| Private Endpoint           | Inbound data          | ~$3          |
+| Azure Bastion Developer    | Free portal feature   | $0           |
+| Defender for Cloud         | Free CSPM             | $0           |
+| Azure Migrate              | Free                  | $0           |
+| Budget (consumption)       | Free                  | $0           |
+| **Subtotal**               |                       | **~$8**      |
 
 ### NAT Gateway (baseline, vpn)
 
-| Resource | Monthly Cost |
-|----------|-------------|
-| NAT Gateway | ~$32 |
-| Public IP (Standard) | ~$3 |
-| Data processed (est. 10GB) | ~$0.45 |
-| **Subtotal** | **~$35** |
+| Resource                   | Monthly Cost |
+| -------------------------- | ------------ |
+| NAT Gateway                | ~$32         |
+| Public IP (Standard)       | ~$3          |
+| Data processed (est. 10GB) | ~$0.45       |
+| **Subtotal**               | **~$35**     |
 
 ### Azure Firewall (firewall, full)
 
-| Resource | Monthly Cost |
-|----------|-------------|
-| Azure Firewall (Basic SKU) | ~$275 |
-| Public IP ×2 (FW + management) | ~$7 |
-| Data processed (est. 50GB) | ~$8 |
-| **Subtotal** | **~$290** |
+| Resource                       | Monthly Cost |
+| ------------------------------ | ------------ |
+| Azure Firewall (Basic SKU)     | ~$275        |
+| Public IP ×2 (FW + management) | ~$7          |
+| Data processed (est. 50GB)     | ~$8          |
+| **Subtotal**                   | **~$290**    |
 
 ### VPN Gateway (vpn, full)
 
-| Resource | Monthly Cost |
-|----------|-------------|
-| VPN Gateway (VpnGw1) | ~$140 |
-| Public IP (Standard) | ~$4 |
-| Data transfer (est. 50GB) | ~$2 |
-| **Subtotal** | **~$146** |
+| Resource                       | Monthly Cost |
+| ------------------------------ | ------------ |
+| VPN Gateway (VpnGw1AZ)          | ~$140        |
+| Public IP (Standard)            | ~$4          |
+| Data transfer (est. 50GB)       | ~$2          |
+| **Subtotal**                    | **~$146**    |
+
+<Aside type="note">
+  The VPN Gateway uses the zone-redundant VpnGw1AZ SKU for higher availability.
+  This costs approximately the same as VpnGw1 in Sweden Central.
+</Aside>
 
 ## Scenario Totals
 
-| Component | Baseline | Firewall | VPN | Full |
-|-----------|----------|----------|-----|------|
-| Always-on | $8 | $8 | $8 | $8 |
-| NAT Gateway | $35 | — | $35 | — |
-| Firewall | — | $290 | — | $290 |
-| VPN Gateway | — | — | $146 | $146 |
-| Hub↔Spoke Peering | — | $5 | $5 | $5 |
-| NSGs + VNets | $0 | $0 | $0 | $0 |
-| **Total** | **~$48** | **~$336** | **~$187** | **~$476** |
+| Component         | Baseline | Firewall  | VPN       | Full      |
+| ----------------- | -------- | --------- | --------- | --------- |
+| Always-on         | $8       | $8        | $8        | $8        |
+| NAT Gateway       | $35      | —         | $35       | —         |
+| Firewall          | —        | $290      | —         | $290      |
+| VPN Gateway       | —        | —         | $146      | $146      |
+| Hub↔Spoke Peering | —        | $5        | $5        | $5        |
+| NSGs + VNets      | $0       | $0        | $0        | $0        |
+| **Total**         | **~$48** | **~$336** | **~$187** | **~$476** |
 
 ## Cost Optimization Tips
 
@@ -87,8 +94,8 @@ import { Aside } from "@astrojs/starlight/components";
 
 Adding workloads to the spoke VNet incurs standard VM/service costs. The foundation infrastructure cost remains fixed regardless of workload count.
 
-| Additional VMs | Estimated Additional Cost |
-|---------------|--------------------------|
-| 1× B2s (Linux) | ~$30/mo |
-| 1× D2s_v5 (Windows) | ~$140/mo |
-| 1× SQL Server (B2s + 50GB) | ~$80/mo |
+| Additional VMs             | Estimated Additional Cost |
+| -------------------------- | ------------------------- |
+| 1× B2s (Linux)             | ~$30/mo                   |
+| 1× D2s_v5 (Windows)        | ~$140/mo                  |
+| 1× SQL Server (B2s + 50GB) | ~$80/mo                   |

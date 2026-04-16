@@ -72,7 +72,10 @@ ERROR: Management group 'smb-rf' not found.
 ### .bicepparam Takes Precedence
 
 <Aside type="caution">
-  If both `main.bicepparam` and `main.parameters.json` exist, azd uses `.bicepparam` and **silently ignores** all `azd env set` values. The `.bicepparam` file has been renamed to `.bicepparam.reference` to prevent this.
+  If both `main.bicepparam` and `main.parameters.json` exist, azd uses
+  `.bicepparam` and **silently ignores** all `azd env set` values. The
+  `.bicepparam` file has been renamed to `.bicepparam.reference` to prevent
+  this.
 </Aside>
 
 If you accidentally restore `main.bicepparam`, rename it back:
@@ -122,6 +125,25 @@ az network firewall show -g rg-hub-smb-swc -n fw-hub-smb-swc --query provisionin
 # Force delete
 az network firewall delete -g rg-hub-smb-swc -n fw-hub-smb-swc
 ```
+
+### Azure Firewall Deployment Failures
+
+Azure Firewall (Basic SKU) requires two public IPs and may fail if:
+
+- The subscription has insufficient public IP quota
+- A previous faulted Firewall left orphaned resources (PIP, policy)
+
+**Fix**: Check quota and clean up orphaned resources:
+
+```bash
+# Check public IP quota
+az network list-usages --location swedencentral --query "[?localName=='Public IP Addresses'].{limit:limit, current:currentValue}" -o table
+
+# Delete orphaned firewall policy if present
+az network firewall policy delete -g rg-hub-smb-swc -n fwpol-hub-smb-swc 2>/dev/null
+```
+
+Then retry `azd up`. The pre-provision hook handles most cleanup automatically.
 
 ## Validation Commands
 

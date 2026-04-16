@@ -5,18 +5,18 @@ description: What you need before deploying SMB Ready Foundation
 
 ## Azure Requirements
 
-- **Azure subscription** with Owner or Contributor role
+- **Azure subscription** with Owner role
 - **Management group permissions** — ability to create child management groups under Tenant Root Group
 - **Azure AD Global Administrator** (one-time) — to grant management group access via `Setup-ManagementGroupPermissions.ps1`
 
 ## CLI Tools
 
-| Tool | Version | Install |
-|------|---------|---------|
-| **Azure CLI** | 2.60+ | [Install](https://learn.microsoft.com/cli/azure/install-azure-cli) |
-| **Azure Developer CLI (azd)** | 1.9+ | [Install](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) |
-| **Bicep CLI** | 0.30+ | `az bicep upgrade` |
-| **PowerShell** | 7.4+ | [Install](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) |
+| Tool                          | Version | Install                                                                                   |
+| ----------------------------- | ------- | ----------------------------------------------------------------------------------------- |
+| **Azure CLI**                 | 2.60+   | [Install](https://learn.microsoft.com/cli/azure/install-azure-cli)                        |
+| **Azure Developer CLI (azd)** | 1.9+    | [Install](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)    |
+| **Bicep CLI**                 | 0.30+   | `az bicep upgrade`                                                                        |
+| **PowerShell**                | 7.4+    | [Install](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) |
 
 Verify installation:
 
@@ -42,12 +42,19 @@ azd auth login
 
 ## Dev Container (Recommended)
 
-The repository includes a dev container with all tools pre-installed. Open in VS Code:
+The repository includes a dev container with all required tools pre-installed:
+
+- Azure CLI 2.60+ with Bicep extension
+- Azure Developer CLI (azd) 1.9+
+- PowerShell 7.4+
+- GitHub CLI, Node.js, Python 3, Terraform
+
+To use it:
 
 1. Clone the repository
 2. Open in VS Code
 3. Press `F1` → **Dev Containers: Reopen in Container**
-4. All CLI tools are pre-configured
+4. All CLI tools are pre-configured — no manual installation needed
 
 ## Resource Providers
 

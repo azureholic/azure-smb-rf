@@ -51,7 +51,9 @@ Tenant Root Group
 </Steps>
 
 <Aside type="note">
-  After initial setup, the pre-provision hook handles MG creation and policy deployment idempotently on every `azd up`. You don't need to repeat these steps.
+  After initial setup, the pre-provision hook handles MG creation and policy
+  deployment idempotently on every `azd up`. You don't need to repeat these
+  steps.
 </Aside>
 
 ## How Policies Are Deployed
@@ -59,25 +61,25 @@ Tenant Root Group
 The pre-provision hook (`hooks/pre-provision.ps1`) deploys policies in two steps:
 
 1. **Step 5a**: Deploys `deploy-mg.bicep` to the **parent** management group — creates the `smb-rf` MG and associates the subscription (idempotent)
-2. **Step 5b**: Deploys `modules/policy-assignments-mg.bicep` to the `smb-rf` MG — creates 33 policy assignments
+2. **Step 5b**: Deploys `modules/policy-assignments-mg.bicep` to the `smb-rf` MG — creates 30 MG-scoped policy assignments (3 additional policies are deployed at subscription scope by `main.bicep`)
 
 Both steps run a `what-if` preview before deploying.
 
 ## Policy Categories
 
-| Category | Count | Enforcement | Purpose |
-|----------|-------|-------------|---------|
-| Compute | 6 | 4 Deny + 2 Audit | VM SKU restrictions, no public IPs, managed disks, no classic VMs |
-| Network | 5 | 1 Deny + 4 Audit | NSG on subnets, restrict ports, disable IP forwarding, flow logs |
-| Storage | 5 | 2 Deny + 3 Audit | HTTPS-only, no public blob, TLS 1.2, restrict network access |
-| Identity | 4 | 4 Audit | Blocked accounts, MFA for owners, external accounts |
-| Tagging | 3 | 3 Deny | Require Environment, Owner, Project tags |
-| Key Vault | 7 | 1 Deny + 6 Audit | Soft delete, purge protection, RBAC, secrets/keys expiration |
-| Monitoring | 1 | 1 Audit | Diagnostic settings required for key resource types |
-| Backup | 1 | 1 Audit | VMs should be backed up |
-| Governance | 1 | 1 Audit | Allowed resource locations |
+| Category   | Count | Enforcement      | Purpose                                                           |
+| ---------- | ----- | ---------------- | ----------------------------------------------------------------- |
+| Compute    | 6     | 2 Deny + 4 Audit | VM SKU restrictions, no public IPs, managed disks, classic VMs, updates, endpoint protection |
+| Network    | 5     | 1 Deny + 4 Audit | NSG on subnets, restrict ports, disable IP forwarding, flow logs  |
+| Storage    | 5     | 3 Deny + 2 Audit | HTTPS-only, no public blob, TLS 1.2, restrict network access      |
+| Identity   | 4     | 4 Audit          | SQL Azure AD auth, SQL public access, MFA for owners, blocked accounts |
+| Tagging    | 2     | 2 Deny           | Require Environment and Owner tags                                |
+| Key Vault  | 7     | 7 Audit          | Soft delete, purge protection, RBAC, secrets/keys expiration, resource logs |
+| Monitoring | 1     | 1 Audit          | Diagnostic settings required for key resource types               |
+| Backup     | 2     | 2 Audit          | VMs should be backed up, storage geo-redundancy                   |
+| Governance | 1     | 1 Deny           | Allowed resource locations                                        |
 
-**Total: 33 policy assignments** (11 Deny + 22 Audit)
+**Total: 33 policy assignments** (9 Deny + 24 Audit)
 
 For the complete policy catalog with policy definition IDs, see [Policy Catalog](/azure-smb-rf/reference/policies/).
 

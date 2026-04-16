@@ -7,7 +7,7 @@ description: Frequently asked questions about SMB Ready Foundation
 
 ### What is SMB Ready Foundation?
 
-A cost-optimized Azure landing zone designed for Microsoft Partners migrating SMB customers from VMware to Azure. It provides hub-spoke networking, 33 governance policies, and 4 deployment scenarios — all deployable with a single `azd up` command.
+A repeatable Azure infrastructure foundation designed for Microsoft Partners migrating SMB customers from VMware to Azure. It provides hub-spoke networking, 33 governance policies, and 4 deployment scenarios — all deployable with a single `azd up` command.
 
 ### Who is this for?
 
@@ -51,6 +51,7 @@ azd up
 ### Why azd instead of `az deployment`?
 
 azd provides:
+
 - Environment-based configuration (`azd env set`)
 - Pre/post-provision hooks (CIDR validation, MG policy deployment, cleanup)
 - Consistent deployment lifecycle
@@ -65,6 +66,7 @@ No. Global Administrator is only needed once to run `Setup-ManagementGroupPermis
 ### Why hub-spoke instead of a flat VNet?
 
 Hub-spoke enables:
+
 - Centralized shared services (Bastion, DNS, Firewall)
 - Workload isolation (spoke per environment/customer)
 - Policy inheritance through management groups
@@ -80,7 +82,7 @@ Route tables are centrally managed networking resources. They live in the hub RG
 
 ### Why no Azure Bastion Standard?
 
-Bastion Developer (free tier) is sufficient for SMB workloads. It provides portal-based SSH/RDP without a dedicated Bastion host. Partners can upgrade to Standard if needed.
+Bastion Developer is a free Azure portal capability that provides browser-based SSH/RDP to VMs without deploying a dedicated Bastion host resource. No infrastructure is created — it works automatically with VMs in any VNet. Partners can upgrade to Bastion Standard if they need features like file transfer or IP-based connections.
 
 ## Policies
 
@@ -96,7 +98,7 @@ az policy assignment delete \
 
 ### Why Audit instead of Deny for most policies?
 
-Deny policies block resource creation immediately, which can disrupt existing workflows. The foundation uses Deny only for critical guardrails (VM SKUs, public IPs, managed disks, storage HTTPS, Key Vault soft-delete, tagging). Everything else starts as Audit — partners can tighten enforcement after assessing impact.
+Deny policies block resource creation immediately, which can disrupt existing workflows. The foundation uses Deny only for critical guardrails (VM SKUs, public IPs, storage HTTPS, public blob access, TLS 1.2, IP forwarding, tagging, allowed locations). Everything else starts as Audit — partners can tighten enforcement after assessing impact.
 
 ### What if a policy blocks my resource?
 

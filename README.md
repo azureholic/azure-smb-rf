@@ -22,7 +22,7 @@
   <h1 align="center">Azure SMB Ready Foundation</h1>
 
   <p align="center">
-    <strong>Cost-optimized Azure landing zone for SMB VMware-to-Azure migrations.</strong>
+    <strong>Repeatable Azure infrastructure for SMB VMware-to-Azure migrations.</strong>
     <br />
     Hub-spoke networking • 33 governance policies • 4 deployment scenarios • From $48/month
     <br />
@@ -55,7 +55,7 @@
 
 ## 🚀 About
 
-Azure SMB Ready Foundation deploys a complete, production-ready Azure landing zone using a
+Azure SMB Ready Foundation deploys a complete, production-ready Azure environment using a
 **hub-spoke** topology within a single subscription. Built on 13
 [Azure Verified Modules](https://aka.ms/avm) and deployable with a single `azd up` command.
 
@@ -83,12 +83,12 @@ Azure SMB Ready Foundation deploys a complete, production-ready Azure landing zo
 
 ## 💰 Deployment Scenarios
 
-| Scenario | Monthly Cost | Connectivity | Egress Control |
-| -------- | ----------- | ------------ | -------------- |
-| **baseline** | ~$48 | Cloud-only | NAT Gateway |
-| **firewall** | ~$336 | Cloud-only | Azure Firewall + UDR |
-| **vpn** | ~$187 | Hybrid (IPsec) | NAT Gateway |
-| **full** | ~$476 | Hybrid (IPsec) | Azure Firewall + UDR |
+| Scenario     | Monthly Cost | Connectivity   | Egress Control       |
+| ------------ | ------------ | -------------- | -------------------- |
+| **baseline** | ~$48         | Cloud-only     | NAT Gateway          |
+| **firewall** | ~$336        | Cloud-only     | Azure Firewall + UDR |
+| **vpn**      | ~$187        | Hybrid (IPsec) | NAT Gateway          |
+| **full**     | ~$476        | Hybrid (IPsec) | Azure Firewall + UDR |
 
 All scenarios include: hub-spoke VNets, NSGs, Bastion Developer, Key Vault (with PE),
 Log Analytics, Automation Account, Recovery Vault, Azure Migrate, Budget, Defender (free CSPM),
@@ -150,16 +150,16 @@ and cleans up stale resources.
 
 ### Resources (6 Resource Groups)
 
-| Resource Group | Resources |
-| -------------- | --------- |
-| `rg-hub-smb-{r}` | Hub VNet, NSG, Private DNS, Bastion, Firewall*, VPN GW*, Route Tables* |
-| `rg-spoke-prod-{r}` | Spoke VNet, NSG, NAT Gateway* |
-| `rg-monitor-smb-{r}` | Log Analytics (500MB/day cap), Automation Account |
-| `rg-backup-smb-{r}` | Recovery Services Vault |
-| `rg-security-smb-{r}` | Key Vault + Private Endpoint |
-| `rg-migrate-smb-{r}` | Azure Migrate Project |
+| Resource Group        | Resources                                                               |
+| --------------------- | ----------------------------------------------------------------------- |
+| `rg-hub-smb-{r}`      | Hub VNet, NSG, Private DNS, Firewall*, VPN GW*, Route Tables\\* |
+| `rg-spoke-prod-{r}`   | Spoke VNet, NSG, NAT Gateway\*                                          |
+| `rg-monitor-smb-{r}`  | Log Analytics (500MB/day cap), Automation Account                       |
+| `rg-backup-smb-{r}`   | Recovery Services Vault                                                 |
+| `rg-security-smb-{r}` | Key Vault + Private Endpoint                                            |
+| `rg-migrate-smb-{r}`  | Azure Migrate Project                                                   |
 
-*Conditional — depends on scenario. `{r}` = region abbreviation (e.g., `swc`).
+\*Conditional — depends on scenario. `{r}` = region abbreviation (e.g., `swc`).
 
 ### Subscription-Scoped
 
@@ -174,18 +174,18 @@ and cleans up stale resources.
 
 **33 Azure Policy assignments** at the `smb-rf` management group scope:
 
-| Category | Deny | Audit | Total |
-| -------- | ---- | ----- | ----- |
-| Compute | 4 | 2 | 6 |
-| Network | 1 | 4 | 5 |
-| Storage | 2 | 3 | 5 |
-| Identity | 0 | 4 | 4 |
-| Key Vault | 1 | 6 | 7 |
-| Tagging | 3 | 0 | 3 |
-| Monitoring | 0 | 1 | 1 |
-| Backup | 0 | 1 | 1 |
-| Governance | 0 | 1 | 1 |
-| **Total** | **11** | **22** | **33** |
+| Category   | Deny  | Audit  | Total  |
+| ---------- | ----- | ------ | ------ |
+| Compute    | 2     | 4      | 6      |
+| Network    | 1     | 4      | 5      |
+| Storage    | 3     | 2      | 5      |
+| Identity   | 0     | 4      | 4      |
+| Key Vault  | 0     | 7      | 7      |
+| Tagging    | 2     | 0      | 2      |
+| Monitoring | 0     | 1      | 1      |
+| Backup     | 0     | 2      | 2      |
+| Governance | 1     | 0      | 1      |
+| **Total**  | **9** | **24** | **33** |
 
 Management group hierarchy:
 
@@ -235,17 +235,17 @@ infra/bicep/smb-ready-foundation/
 
 Full documentation is available in the [docs site](site/src/content/docs/):
 
-| Section | Content |
-| ------- | ------- |
-| [Quick Start](site/src/content/docs/getting-started/quick-start.mdx) | First deployment in 5 commands |
-| [Scenarios & Costs](site/src/content/docs/deploying/scenarios.mdx) | 4 scenarios with cost comparison |
-| [Configuration](site/src/content/docs/deploying/configuration.mdx) | All 11 parameters, CIDR planning |
-| [Management Group](site/src/content/docs/deploying/management-group.mdx) | MG setup, 33 policies |
-| [Customization](site/src/content/docs/operating/customization.mdx) | Adding modules, regions, policies |
-| [Teardown](site/src/content/docs/operating/teardown.mdx) | Cleanup and removal |
-| [Troubleshooting](site/src/content/docs/operating/troubleshooting.mdx) | Common errors and fixes |
-| [Policy Catalog](site/src/content/docs/reference/policies.mdx) | Complete 33-policy reference |
-| [Cost Comparison](site/src/content/docs/reference/costs.mdx) | Detailed cost breakdown |
+| Section                                                                  | Content                           |
+| ------------------------------------------------------------------------ | --------------------------------- |
+| [Quick Start](site/src/content/docs/getting-started/quick-start.mdx)     | First deployment in 5 commands    |
+| [Scenarios & Costs](site/src/content/docs/deploying/scenarios.mdx)       | 4 scenarios with cost comparison  |
+| [Configuration](site/src/content/docs/deploying/configuration.mdx)       | All 11 parameters, CIDR planning  |
+| [Management Group](site/src/content/docs/deploying/management-group.mdx) | MG setup, 33 policies             |
+| [Customization](site/src/content/docs/operating/customization.mdx)       | Adding modules, regions, policies |
+| [Teardown](site/src/content/docs/operating/teardown.mdx)                 | Cleanup and removal               |
+| [Troubleshooting](site/src/content/docs/operating/troubleshooting.mdx)   | Common errors and fixes           |
+| [Policy Catalog](site/src/content/docs/reference/policies.mdx)           | Complete 33-policy reference      |
+| [Cost Comparison](site/src/content/docs/reference/costs.mdx)             | Detailed cost breakdown           |
 
 Build the docs locally:
 

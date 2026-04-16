@@ -9,6 +9,11 @@ import { Aside, Steps } from "@astrojs/starlight/components";
 
 Delete all resource groups but keep the management group and policies:
 
+<Aside type="note">
+  Replace `swc` with `gwc` if you deployed to `germanywestcentral`, and replace
+  `prod` with your environment name (`dev` or `staging`) if different.
+</Aside>
+
 ```bash
 for rg in rg-hub-smb-swc rg-spoke-prod-swc rg-monitor-smb-swc rg-backup-smb-swc rg-migrate-smb-swc rg-security-smb-swc; do
   az group delete --name "$rg" --yes --no-wait
@@ -47,6 +52,7 @@ pwsh scripts/Remove-SmbReadyFoundation.ps1 -Force -RemoveManagementGroup
 ```
 
 The script removes:
+
 - 6 resource groups (with all contained resources)
 - Subscription-scoped budget
 - MG-scoped policy assignments (33 policies)
@@ -57,13 +63,13 @@ The script removes:
 ### Remove only hub networking
 
 ```bash
-az group delete --name rg-hub-smb-swc --yes
+az group delete --name rg-hub-smb-swc --yes  # replace swc with your region abbreviation
 ```
 
 ### Remove only the spoke
 
 ```bash
-az group delete --name rg-spoke-prod-swc --yes
+az group delete --name rg-spoke-prod-swc --yes  # replace prod/swc as needed
 ```
 
 ### Remove policies only
@@ -95,7 +101,9 @@ When switching scenarios, delete resource groups and budget but keep the MG and 
 </Steps>
 
 <Aside type="caution">
-  Resources with delete locks (Key Vault soft delete, Recovery Services Vault) may require manual intervention. Check the Azure Portal if deletions appear stuck.
+  Resources with delete locks (Key Vault soft delete, Recovery Services Vault)
+  may require manual intervention. Check the Azure Portal if deletions appear
+  stuck.
 </Aside>
 
 ## azd Environment Cleanup
@@ -111,4 +119,19 @@ List all environments:
 
 ```bash
 azd env list
+```
+
+## Discover an Existing Deployment
+
+If you're cleaning up a deployment you didn't create, discover the deployed resources first:
+
+```bash
+# Find SMB Ready Foundation resource groups
+az group list --query "[?starts_with(name,'rg-') && (contains(name,'smb') || contains(name,'spoke'))].{name:name, location:location}" -o table
+
+# Check if the management group exists
+az account management-group show --name smb-rf 2>/dev/null && echo "MG exists" || echo "No MG"
+
+# Count policy assignments
+az policy assignment list --scope "/providers/Microsoft.Management/managementGroups/smb-rf" --query "length(@)" 2>/dev/null
 ```
