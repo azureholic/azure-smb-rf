@@ -10,6 +10,7 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![Azure][azure-shield]][azure-url]
+[![Version](https://img.shields.io/badge/version-v0.10.0-blue?style=for-the-badge)](VERSION.md)
 
 <!-- PROJECT LOGO -->
 <br />
@@ -18,17 +19,15 @@
     <img src="https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Rocket/3D/rocket_3d.png" alt="Logo" width="120" height="120">
   </a>
 
-  <h1 align="center">Azure SMB Ready Foundations</h1>
+  <h1 align="center">Azure SMB Ready Foundation</h1>
 
   <p align="center">
-    <strong>Repeatable Azure SMB Ready Foundations for SMB customers.</strong>
+    <strong>Repeatable Azure infrastructure for SMB VMware-to-Azure migrations.</strong>
     <br />
-    On-premises migration ready • Policy-enforced • Security-hardened
+    Hub-spoke networking • 33 governance policies • 4 deployment scenarios • From $48/month
     <br />
     <br />
     <a href="#-quick-start"><strong>Quick Start »</strong></a>
-    ·
-    <a href="agent-output/smb-ready-foundation/">View Artifacts</a>
     ·
     <a href="https://github.com/jonathan-vella/azure-smb-rf/issues/new?labels=bug">Report Bug</a>
     ·
@@ -40,17 +39,13 @@
 <details>
   <summary>📑 Table of Contents</summary>
   <ol>
-    <li><a href="#-about-the-project">About The Project</a></li>
-    <li><a href="#-architecture">Architecture</a></li>
+    <li><a href="#-about">About</a></li>
     <li><a href="#-deployment-scenarios">Deployment Scenarios</a></li>
     <li><a href="#-quick-start">Quick Start</a></li>
-    <li><a href="#-included-resources">Included Resources</a></li>
-    <li><a href="#-azure-policy-guardrails">Azure Policy Guardrails</a></li>
+    <li><a href="#-whats-included">What's Included</a></li>
+    <li><a href="#-governance">Governance</a></li>
     <li><a href="#-project-structure">Project Structure</a></li>
-    <li><a href="#-key-design-decisions">Key Design Decisions</a></li>
-    <li><a href="#-development">Development</a></li>
-    <li><a href="#-target-audience">Target Audience</a></li>
-    <li><a href="#-additional-resources">Additional Resources</a></li>
+    <li><a href="#-documentation">Documentation</a></li>
     <li><a href="#-contributing">Contributing</a></li>
     <li><a href="#-license">License</a></li>
   </ol>
@@ -58,64 +53,29 @@
 
 ---
 
-## 🚀 About The Project
+## 🚀 About
 
-Single-subscription Azure environment designed for **Microsoft Partners** migrating small
-business customers from on-premises infrastructure to Azure at scale.
+Azure SMB Ready Foundation deploys a complete, production-ready Azure environment using a
+**hub-spoke** topology within a single subscription. Built on 13
+[Azure Verified Modules](https://aka.ms/avm) and deployable with a single `azd up` command.
 
-<div align="center">
+**Designed for** Microsoft Partners migrating SMB customers from VMware to Azure.
 
-| ✅ On-premises migrations |        ✅ Cost-first design         | ✅ Policy-enforced security |   ✅ Repeatable deployments   |
-| :-----------------------: | :---------------------------------: | :-------------------------: | :---------------------------: |
-|     Via Azure Migrate     | Resilience traded for affordability |    20 guardrail policies    | No per-customer customization |
+### Key Features
 
-</div>
+- **4 deployment scenarios** — baseline ($48/mo) to full ($476/mo)
+- **33 MG-scoped Azure Policies** — compute, network, storage, identity, tagging, Key Vault,
+  monitoring, backup
+- **azd-powered** — environment-based config, pre/post-provision hooks, one-command deploy
+- **13 AVM Bicep modules** — production-tested, Microsoft-maintained
+- **EU GDPR regions** — swedencentral (primary), germanywestcentral (failover)
 
-Built using the [APEX](https://github.com/jonathan-vella/azure-agentic-infraops) toolkit —
-an AI-agent workflow for requirements gathering, architecture assessment, and Bicep code generation.
-Azure SMB Ready Foundations is a ready-to-deploy output of that toolkit, not the toolkit itself.
-
-### 🛠️ Built With
+### Built With
 
 [![Bicep][bicep-shield]][bicep-url]
 [![PowerShell][powershell-shield]][powershell-url]
 [![Azure CLI][azcli-shield]][azcli-url]
-[![GitHub Copilot][copilot-shield]][copilot-url]
 [![Dev Containers][devcontainer-shield]][devcontainer-url]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
----
-
-## 🏗️ Architecture
-
-<div align="center">
-  <img src="docs/images/architecture.png" alt="Azure SMB Ready Foundations Architecture" width="800">
-  <br />
-  <em>Complete architecture with all optional components (Firewall, VPN Gateway)</em>
-</div>
-
-<br />
-
-Azure SMB Ready Foundations follows a **hub-and-spoke** topology within a single subscription,
-governed by a dedicated **management group** for policy inheritance:
-
-### Management Group Hierarchy
-
-```text
-Tenant Root Group
-└── smb-rf (SMB Ready Foundation)
-    └── Customer Subscription
-```
-
-| Component             | Purpose                                                            |
-| --------------------- | ------------------------------------------------------------------ |
-| **Management Group**  | `smb-rf` — 30 Azure Policies scoped at MG level                    |
-| **Hub VNet**          | Centralized services (Bastion, Firewall, VPN Gateway, Private DNS) |
-| **Spoke VNet**        | Workload hosting with NAT Gateway for outbound internet            |
-| **Azure Migrate**     | Server discovery and assessment                                    |
-| **Log Analytics**     | Centralized monitoring with 500 MB/day cap                         |
-| **Recovery Services** | VM backup with default policy                                      |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -123,21 +83,16 @@ Tenant Root Group
 
 ## 💰 Deployment Scenarios
 
-Choose the scenario that fits your budget and connectivity requirements:
+| Scenario     | Monthly Cost | Connectivity   | Egress Control       |
+| ------------ | ------------ | -------------- | -------------------- |
+| **baseline** | ~$48         | Cloud-only     | NAT Gateway          |
+| **firewall** | ~$336        | Cloud-only     | Azure Firewall + UDR |
+| **vpn**      | ~$187        | Hybrid (IPsec) | NAT Gateway          |
+| **full**     | ~$476        | Hybrid (IPsec) | Azure Firewall + UDR |
 
-<div align="center">
-
-|    Scenario    | Firewall | VPN | NAT GW | Peering | UDR | Deploy Time | Monthly Cost |
-| :------------: | :------: | :-: | :----: | :-----: | :-: | :---------: | -----------: |
-| **`baseline`** |    ❌    | ❌  |   ✅   |   ❌    | ❌  |   ~4 min    |     **~$48** |
-| **`firewall`** |    ✅    | ❌  |   ❌   |   ✅    | ✅  |   ~15 min   |    **~$336** |
-|   **`vpn`**    |    ❌    | ✅  |   ❌   |   ✅    | ❌  |   ~25 min   |    **~$187** |
-|   **`full`**   |    ✅    | ✅  |   ❌   |   ✅    | ✅  | ~40-55 min  |    **~$476** |
-
-</div>
-
-> 💡 **Tip:** Start with `baseline` for testing, upgrade to `firewall` or `full` for production
-> workloads requiring traffic inspection or hybrid connectivity.
+All scenarios include: hub-spoke VNets, NSGs, Bastion Developer, Key Vault (with PE),
+Log Analytics, Automation Account, Recovery Vault, Azure Migrate, Budget, Defender (free CSPM),
+and 33 MG-scoped governance policies.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -147,127 +102,98 @@ Choose the scenario that fits your budget and connectivity requirements:
 
 ### Prerequisites
 
-- 🐳 Docker Desktop (or Podman, Colima, Rancher Desktop)
-- 💻 VS Code with [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension
-- 🤖 GitHub Copilot subscription
-- ☁️ Azure subscription with Owner access
-- 🔑 Global Administrator or Tenant Root access (for Phase 0 — management group permissions)
+- Azure subscription with Owner role
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) 2.60+
+- [Azure Developer CLI (azd)](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) 1.9+
+- [PowerShell](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) 7.4+
 
-### 1️⃣ Clone and Open
+### Deploy in 5 Steps
 
 ```bash
+# 1. Clone and navigate
 git clone https://github.com/jonathan-vella/azure-smb-rf.git
-cd azure-smb-rf
-code .
+cd azure-smb-rf/infra/bicep/smb-ready-foundation
+
+# 2. Create management group (one-time)
+az account management-group create --name smb-rf --display-name "SMB Ready Foundation"
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+az account management-group subscription add --name smb-rf --subscription $SUBSCRIPTION_ID
+
+# 3. Configure environment
+azd env new my-foundation
+azd env set SCENARIO baseline
+azd env set OWNER "your@email.com"
+azd env set AZURE_LOCATION swedencentral
+azd env set ENVIRONMENT prod
+azd env set HUB_VNET_ADDRESS_SPACE "10.0.0.0/23"
+azd env set SPOKE_VNET_ADDRESS_SPACE "10.0.2.0/23"
+azd env set LOG_ANALYTICS_DAILY_CAP_GB "0.5"
+azd env set MANAGEMENT_GROUP_ID smb-rf
+
+# 4. Deploy
+azd up
+
+# 5. Verify
+az group list --query "[?starts_with(name,'rg-')].{name:name,state:properties.provisioningState}" -o table
 ```
 
-### 2️⃣ Start Dev Container
+The pre-provision hook automatically validates CIDRs, creates the MG, deploys 33 policies,
+and cleans up stale resources.
 
-Press `F1` → **Dev Containers: Reopen in Container**
-
-> ⏱️ First build takes 3-5 minutes
-
-### 3️⃣ Authenticate with Azure
-
-```bash
-az login
-az account set --subscription "<your-subscription-id>"
-```
-
-### 4️⃣ Phase 0: Management Group Permissions (one-time)
-
-```powershell
-cd scripts
-./Setup-ManagementGroupPermissions.ps1
-```
-
-> Grants the deploying identity **Management Group Contributor** and **Resource Policy Contributor**
-> on the tenant root. Requires Global Administrator. Only needed once per tenant.
-
-### 5️⃣ Phase 1: Management Group + MG Policies
-
-```powershell
-cd infra/bicep/smb-ready-foundation
-./deploy-mg.ps1 -Scenario baseline
-```
-
-> Creates the `smb-rf` management group under tenant root, moves the subscription under it,
-> and deploys 30 policies at management group scope.
-
-### 6️⃣ Phase 2: Subscription Infrastructure
-
-```powershell
-# Preview changes (What-If)
-./deploy.ps1 -Scenario baseline -WhatIf
-
-# Deploy baseline (~$48/mo)
-./deploy.ps1 -Scenario baseline
-
-# Deploy with firewall (~$336/mo)
-./deploy.ps1 -Scenario firewall
-
-# Deploy full scenario (~$476/mo)
-./deploy.ps1 -Scenario full
-```
-
-### 7️⃣ Cleanup (Optional)
-
-When you're done testing, remove all deployed resources:
-
-```powershell
-cd infra/bicep/smb-ready-foundation/scripts
-
-# Phase 0: Remove MG-scoped policies
-./Remove-SmbReadyFoundation.ps1 -Location swedencentral -WhatIf
-
-# Full cleanup (subscription resources + optionally remove management group)
-./Remove-SmbReadyFoundation.ps1 -Location swedencentral -Force
-./Remove-SmbReadyFoundation.ps1 -Location swedencentral -Force -RemoveManagementGroup
-```
-
-> ⏱️ Cleanup takes 10-15 minutes (Azure Firewall and VPN Gateway take longest to delete)
+> **Cleanup**: `pwsh scripts/Remove-SmbReadyFoundation.ps1 -Force -RemoveManagementGroup`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
 
-## 📦 Included Resources
+## 📦 What's Included
 
-### Always Deployed
+### Resources (6 Resource Groups)
 
-| Resource                   | Resource Group | Configuration                |
-| -------------------------- | -------------- | ---------------------------- |
-| 🌐 Hub VNet                | `rg-hub`       | Pre-provisioned subnets      |
-| 🌐 Spoke VNet              | `rg-spoke`     | Workload subnets + NSG       |
-| 🚪 NAT Gateway             | `rg-spoke`     | Outbound internet            |
-| 🔐 Azure Bastion Developer | `rg-hub`       | Secure VM access             |
-| 🔗 Azure Private DNS       | `rg-hub`       | Auto-registration            |
-| 📦 Azure Migrate Project   | `rg-migrate`   | Server assessment            |
-| 📊 Log Analytics Workspace | `rg-monitor`   | 500 MB/day, 30-day retention |
-| 💾 Recovery Services Vault | `rg-backup`    | VM backup                    |
-| 💰 Cost Management Budget  | subscription   | $500/month + alerts          |
-| 🛡️ Defender for Cloud      | subscription   | Free tier                    |
+| Resource Group        | Resources                                                               |
+| --------------------- | ----------------------------------------------------------------------- |
+| `rg-hub-smb-{r}`      | Hub VNet, NSG, Private DNS, Firewall*, VPN GW*, Route Tables\\* |
+| `rg-spoke-prod-{r}`   | Spoke VNet, NSG, NAT Gateway\*                                          |
+| `rg-monitor-smb-{r}`  | Log Analytics (500MB/day cap), Automation Account                       |
+| `rg-backup-smb-{r}`   | Recovery Services Vault                                                 |
+| `rg-security-smb-{r}` | Key Vault + Private Endpoint                                            |
+| `rg-migrate-smb-{r}`  | Azure Migrate Project                                                   |
+
+\*Conditional — depends on scenario. `{r}` = region abbreviation (e.g., `swc`).
+
+### Subscription-Scoped
+
+- Monthly budget ($500 default) with alert at 80%/100%
+- Defender for Cloud (free CSPM)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
 
-## 🛡️ Azure Policy Guardrails
+## 🛡️ Governance
 
-34 policies split across management group and subscription scopes:
+**33 Azure Policy assignments** at the `smb-rf` management group scope:
 
-| Scope                | Count | Examples                                                 |
-| -------------------- | ----- | -------------------------------------------------------- |
-| **Management Group** | 30    | Allowed SKUs, no public IPs, HTTPS only, TLS 1.2+, tags  |
-| **Subscription**     | 3+1   | Backup auto-enroll (DeployIfNotExists), budget, Defender |
+| Category   | Deny  | Audit  | Total  |
+| ---------- | ----- | ------ | ------ |
+| Compute    | 2     | 4      | 6      |
+| Network    | 1     | 4      | 5      |
+| Storage    | 3     | 2      | 5      |
+| Identity   | 0     | 4      | 4      |
+| Key Vault  | 0     | 7      | 7      |
+| Tagging    | 2     | 0      | 2      |
+| Monitoring | 0     | 1      | 1      |
+| Backup     | 0     | 2      | 2      |
+| Governance | 1     | 0      | 1      |
+| **Total**  | **9** | **24** | **33** |
 
-| Category       | Policies                                                |
-| -------------- | ------------------------------------------------------- |
-| **Compute**    | Allowed SKUs (B/D/E only), no public IPs, managed disks |
-| **Network**    | NSG required, management ports closed, no IP forwarding |
-| **Storage**    | HTTPS only, no public blob, TLS 1.2+                    |
-| **Identity**   | Azure AD-only SQL, no classic resources                 |
-| **Compliance** | Required tags, allowed locations, backup audit          |
+Management group hierarchy:
+
+```text
+Tenant Root Group
+└── smb-rf (33 policy assignments)
+    └── your-subscription (6 RGs + budget + Defender)
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -275,95 +201,57 @@ cd infra/bicep/smb-ready-foundation/scripts
 
 ## 📁 Project Structure
 
-```
-├── 📁 .devcontainer/          # Dev container configuration
-├── 📁 .github/
-│   ├── 📁 agents/             # Copilot agents (requirements, architect, bicep-*, deploy)
-│   ├── 📁 instructions/       # AI coding standards
-│   ├── 📁 prompts/
-│   │   └── 📄 plan-smb-ready-foundation.prompt.md  # ⭐ Main prompt
-│   └── 📁 templates/          # Artifact output templates
-├── 📁 agent-output/
-│   └── 📁 smb-ready-foundation/   # Generated artifacts for this project
-├── 📁 docs/
-│   └── 📁 images/             # Architecture diagrams
-├── 📁 infra/bicep/
-│   └── 📁 smb-ready-foundation/   # Bicep templates (generated by agents)
-│       ├── 📄 deploy-mg.bicep     # Management group deployment template
-│       ├── 📄 deploy-mg.ps1       # MG deployment orchestration script
-│       └── 📁 modules/
-│           └── 📄 policy-assignments-mg.bicep  # 30 MG-scoped policy assignments
-├── 📁 scripts/
-│   └── 📄 Setup-ManagementGroupPermissions.ps1  # Phase 0: MG permission setup
-└── 📁 mcp/azure-pricing-mcp/  # Azure Pricing MCP server
+```text
+infra/bicep/smb-ready-foundation/
+├── azure.yaml                      # azd project manifest
+├── main.bicep                      # Main orchestration template (11 params)
+├── main.parameters.json            # azd parameter bridge (${ENV_VAR} substitution)
+├── deploy-mg.bicep                 # Management group creation template
+├── hooks/
+│   ├── pre-provision.ps1           # CIDR validation, MG + 33 policies, cleanup
+│   └── post-provision.ps1          # Deployment summary
+├── modules/
+│   ├── policy-assignments-mg.bicep # 33 MG-scoped policy assignments
+│   ├── networking-hub.bicep        # Hub VNet + NSG
+│   ├── networking-spoke.bicep      # Spoke VNet + NSG + NAT GW
+│   ├── firewall.bicep              # Azure Firewall + Policy + PIPs
+│   ├── vpn-gateway.bicep           # VPN Gateway + PIP
+│   ├── route-tables.bicep          # UDR for Firewall scenarios
+│   ├── keyvault.bicep              # Key Vault + Private Endpoint
+│   ├── monitoring.bicep            # Log Analytics Workspace
+│   ├── automation.bicep            # Automation Account
+│   ├── backup.bicep                # Recovery Services Vault
+│   ├── migrate.bicep               # Azure Migrate Project
+│   └── defender.bicep              # Defender for Cloud (free tier)
+└── scripts/
+    └── Remove-SmbReadyFoundation.ps1  # Full cleanup script
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
 
-## 🎯 Key Design Decisions
+## 📚 Documentation
 
-| Decision              | Choice                            | Rationale                               |
-| --------------------- | --------------------------------- | --------------------------------------- |
-| **Management Group**  | `smb-rf` under tenant root        | Policy inheritance across subscriptions |
-| **Policy Scope**      | 30 MG-scoped + 3+1 sub-scoped     | MG for guardrails, sub for DINE/budget  |
-| **Resilience**        | Not required                      | Cost priority for SMB                   |
-| **SLA/RTO/RPO**       | N/A                               | Rebuild from Bicep if needed            |
-| **VM Access**         | Azure Bastion Developer           | No public IPs on VMs                    |
-| **Outbound Internet** | NAT Gateway                       | Default outbound deprecated             |
-| **DNS**               | Azure Private DNS                 | Auto-registration for VMs               |
-| **Regions**           | swedencentral, germanywestcentral | EU GDPR compliant                       |
-| **Tags**              | Environment, Owner (required)     | Consistent tagging standard             |
+Full documentation is available in the [docs site](site/src/content/docs/):
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+| Section                                                                  | Content                           |
+| ------------------------------------------------------------------------ | --------------------------------- |
+| [Quick Start](site/src/content/docs/getting-started/quick-start.mdx)     | First deployment in 5 commands    |
+| [Scenarios & Costs](site/src/content/docs/deploying/scenarios.mdx)       | 4 scenarios with cost comparison  |
+| [Configuration](site/src/content/docs/deploying/configuration.mdx)       | All 11 parameters, CIDR planning  |
+| [Management Group](site/src/content/docs/deploying/management-group.mdx) | MG setup, 33 policies             |
+| [Customization](site/src/content/docs/operating/customization.mdx)       | Adding modules, regions, policies |
+| [Teardown](site/src/content/docs/operating/teardown.mdx)                 | Cleanup and removal               |
+| [Troubleshooting](site/src/content/docs/operating/troubleshooting.mdx)   | Common errors and fixes           |
+| [Policy Catalog](site/src/content/docs/reference/policies.mdx)           | Complete 33-policy reference      |
+| [Cost Comparison](site/src/content/docs/reference/costs.mdx)             | Detailed cost breakdown           |
 
----
-
-## 🔧 Development
-
-### Generate Azure SMB Ready Foundations with Agents
-
-1. Press `Ctrl+Shift+A` → Select `@requirements`
-2. Paste content from `.github/prompts/plan-smb-ready-foundation.prompt.md`
-3. Follow agent workflow through to deployment
-
-### Validation Commands
+Build the docs locally:
 
 ```bash
-# Bicep lint
-bicep lint infra/bicep/smb-ready-foundation/*.bicep
-
-# Markdown lint
-npm run lint:md
-
-# Build Bicep
-bicep build infra/bicep/smb-ready-foundation/main.bicep
+cd site && npm install && npm run build
 ```
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
----
-
-## 🎯 Target Audience
-
-Azure SMB Ready Foundations is designed for:
-
-- 🏢 **Microsoft Partners** hosting SMB customers on on-premises infrastructure
-- 🔧 **Managed Service Providers** standardizing Azure onboarding
-- 💼 **IT Consultants** delivering repeatable migration projects
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
----
-
-## 📚 Additional Resources
-
-| Resource                                                                               | Description                                   |
-| -------------------------------------------------------------------------------------- | --------------------------------------------- |
-| [Partner Quick Reference](docs/partner-quick-reference.md)                             | One-page deployment guide for partners        |
-| [APEX Toolkit](https://github.com/jonathan-vella/azure-agentic-infraops) | AI-agent toolkit for Azure platform engineering |
-| [Azure Verified Modules](https://aka.ms/avm)                                           | Bicep module registry                         |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -371,17 +259,14 @@ Azure SMB Ready Foundations is designed for:
 
 ## 🤝 Contributing
 
-Contributions are welcome! Here's how:
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-1. 🍴 Fork the Project
-2. 🌿 Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. 💾 Commit your Changes using [Conventional Commits](https://www.conventionalcommits.org/) (`git commit -m 'feat: add bastion subnet option'`)
-4. 📤 Push to the Branch (`git push origin feature/AmazingFeature`)
-5. 🔃 Open a Pull Request (PR template will guide you)
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
-
-Don't forget to give the project a ⭐ if you found it useful!
+```bash
+# Validate before committing
+npm run validate:all
+bicep build infra/bicep/smb-ready-foundation/main.bicep
+npm run lint:md
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -396,18 +281,10 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 ---
 
 <div align="center">
-  <p>
-    Made with ❤️ by <a href="https://github.com/jonathan-vella">Jonathan Vella</a>
-  </p>
-  <p>
-    <a href="https://github.com/jonathan-vella/azure-smb-rf">
-      <img src="https://img.shields.io/badge/GitHub-Azure--SMB--Ready--Foundations-blue?style=for-the-badge&logo=github" alt="GitHub Repo">
-    </a>
-  </p>
+  <p>Made with ❤️ by <a href="https://github.com/jonathan-vella">Jonathan Vella</a></p>
 </div>
 
 <!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
 [contributors-shield]: https://img.shields.io/github/contributors/jonathan-vella/azure-smb-rf.svg?style=for-the-badge
 [contributors-url]: https://github.com/jonathan-vella/azure-smb-rf/graphs/contributors
@@ -421,16 +298,11 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 [license-url]: https://github.com/jonathan-vella/azure-smb-rf/blob/main/LICENSE
 [azure-shield]: https://img.shields.io/badge/Azure-Ready-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white
 [azure-url]: https://azure.microsoft.com
-
-<!-- TECH STACK BADGES -->
-
-[bicep-shield]: https://img.shields.io/badge/Bicep-0.20+-00A4EF?style=for-the-badge&logo=azurefunctions&logoColor=white
+[bicep-shield]: https://img.shields.io/badge/Bicep-0.30+-00A4EF?style=for-the-badge&logo=azurefunctions&logoColor=white
 [bicep-url]: https://learn.microsoft.com/azure/azure-resource-manager/bicep/
-[powershell-shield]: https://img.shields.io/badge/PowerShell-7+-5391FE?style=for-the-badge&logo=powershell&logoColor=white
+[powershell-shield]: https://img.shields.io/badge/PowerShell-7.4+-5391FE?style=for-the-badge&logo=powershell&logoColor=white
 [powershell-url]: https://learn.microsoft.com/powershell/
-[azcli-shield]: https://img.shields.io/badge/Azure_CLI-2.50+-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white
+[azcli-shield]: https://img.shields.io/badge/Azure_CLI-2.60+-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white
 [azcli-url]: https://learn.microsoft.com/cli/azure/
-[copilot-shield]: https://img.shields.io/badge/GitHub_Copilot-Enabled-000000?style=for-the-badge&logo=github&logoColor=white
-[copilot-url]: https://github.com/features/copilot
 [devcontainer-shield]: https://img.shields.io/badge/Dev_Containers-Ready-007ACC?style=for-the-badge&logo=docker&logoColor=white
 [devcontainer-url]: https://containers.dev/

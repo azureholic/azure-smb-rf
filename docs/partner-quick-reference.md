@@ -1,6 +1,112 @@
+<!-- markdownlint-disable MD013 -->
+
+# Azure SMB Ready Foundation — Partner Quick Reference
+
+> **Version**: v0.10.0 | **Deployment**: `azd up` | **Cleanup**: `Remove-SmbReadyFoundation.ps1`
+
+## Prerequisites
+
+| Requirement               | Minimum                           |
+| ------------------------- | --------------------------------- |
+| Azure subscription        | Owner role                        |
+| Azure CLI                 | 2.60+                             |
+| Azure Developer CLI (azd) | 1.9+                              |
+| PowerShell                | 7.4+                              |
+| Management group          | Create `smb-rf` under tenant root |
+
+## Quick Deploy
+
+```bash
+cd infra/bicep/smb-ready-foundation
+
+# One-time: create management group
+az account management-group create --name smb-rf --display-name "SMB Ready Foundation"
+az account management-group subscription add --name smb-rf \
+  --subscription $(az account show --query id -o tsv)
+
+# Configure
+azd env new customer-prod
+azd env set SCENARIO baseline          # baseline | firewall | vpn | full
+azd env set OWNER "partner@contoso.com"
+azd env set AZURE_LOCATION swedencentral
+azd env set ENVIRONMENT prod
+azd env set HUB_VNET_ADDRESS_SPACE "10.0.0.0/23"
+azd env set SPOKE_VNET_ADDRESS_SPACE "10.0.2.0/23"
+azd env set LOG_ANALYTICS_DAILY_CAP_GB "0.5"
+azd env set MANAGEMENT_GROUP_ID smb-rf
+
+# For vpn or full scenarios only:
+azd env set ON_PREMISES_ADDRESS_SPACE "192.168.0.0/16"
+
+# Deploy
+azd up
+```
+
+## Scenarios
+
+| Scenario     | Cost/month | NAT GW | Firewall | VPN GW | Peering |
+| ------------ | ---------- | ------ | -------- | ------ | ------- |
+| **baseline** | ~$48       | ✅     | —        | —      | —       |
+| **firewall** | ~$336      | —      | ✅       | —      | ✅      |
+| **vpn**      | ~$187      | ✅     | —        | ✅     | ✅      |
+| **full**     | ~$476      | —      | ✅       | ✅     | ✅      |
+
+## What Gets Deployed (All Scenarios)
+
+| Resource Group        | Key Resources                                 |
+| --------------------- | --------------------------------------------- |
+| `rg-hub-smb-swc`      | Hub VNet, NSG, Private DNS, Bastion Developer |
+| `rg-spoke-prod-swc`   | Spoke VNet, NSG, NAT GW or Route Table        |
+| `rg-monitor-smb-swc`  | Log Analytics (500MB cap), Automation Account |
+| `rg-backup-smb-swc`   | Recovery Services Vault                       |
+| `rg-security-smb-swc` | Key Vault + Private Endpoint                  |
+| `rg-migrate-smb-swc`  | Azure Migrate Project                         |
+
+Plus: 33 MG-scoped policies, monthly budget ($500), Defender for Cloud (free CSPM).
+
+## Verification
+
+```bash
+# 6 resource groups
+az group list --query "[?starts_with(name,'rg-')].{name:name,state:properties.provisioningState}" -o table
+
+# 33 policies
+az policy assignment list \
+  --scope "/providers/Microsoft.Management/managementGroups/smb-rf" \
+  --query "length(@)"
+
+# Budget
+az consumption budget list --query "[?name=='budget-smb-monthly'].amount" -o tsv
+```
+
+## Cleanup
+
+```bash
+cd infra/bicep/smb-ready-foundation
+
+# Preview (dry run)
+pwsh scripts/Remove-SmbReadyFoundation.ps1 -WhatIf
+
+# Remove RGs + policies (keep MG)
+pwsh scripts/Remove-SmbReadyFoundation.ps1 -Force
+
+# Remove everything including MG
+pwsh scripts/Remove-SmbReadyFoundation.ps1 -Force -RemoveManagementGroup
+```
+
+## Useful Links
+
+| Resource                | Link                                                                 |
+| ----------------------- | -------------------------------------------------------------------- |
+| Full documentation      | [User Guide](site/src/content/docs/getting-started/quick-start.mdx)  |
+| Configuration reference | [Parameters](site/src/content/docs/deploying/configuration.mdx)      |
+| Policy catalog          | [33 Policies](site/src/content/docs/reference/policies.mdx)          |
+| Troubleshooting         | [Common Issues](site/src/content/docs/operating/troubleshooting.mdx) |
+| Source repository       | [GitHub](https://github.com/jonathan-vella/azure-smb-rf)             |
+
 # Partner Quick Reference Card
 
-> **Azure SMB Ready Foundation v0.3.0** | Single-page deployment guide for Microsoft Partners
+> **Azure SMB Ready Foundation v0.10.0** | Single-page deployment guide for Microsoft Partners
 
 ---
 
@@ -33,15 +139,13 @@ az account set --subscription "<your-subscription-id>"
 cd scripts
 ./Setup-ManagementGroupPermissions.ps1
 
-# 5. Phase 1: Management Group + MG Policies
+# 5. Phase 1+2: Configure and deploy (MG policies + infra in one step)
 cd ../infra/bicep/smb-ready-foundation
-./deploy-mg.ps1 -Scenario baseline
-
-# 6. Phase 2: Deploy subscription infrastructure (choose one)
-./deploy.ps1 -Scenario baseline    # ~4 min, ~$48/mo
-./deploy.ps1 -Scenario firewall    # ~15 min, ~$336/mo
-./deploy.ps1 -Scenario vpn         # ~25 min, ~$187/mo
-./deploy.ps1 -Scenario full        # ~45 min, ~$476/mo
+azd env new smb-rf-baseline
+azd env set SCENARIO baseline       # or: firewall, vpn, full
+azd env set OWNER "partner-ops@contoso.com"
+# For vpn/full: azd env set ON_PREMISES_ADDRESS_SPACE "192.168.0.0/16"
+azd up                              # Deploys MG policies + subscription infra
 ```
 
 ---
@@ -63,7 +167,7 @@ cd ../infra/bicep/smb-ready-foundation
 
 - Hub + Spoke VNet topology
 - NAT Gateway (outbound internet)
-- Azure Bastion Developer (secure VM access)
+- Azure Bastion Developer (portal-based VM access — no infrastructure deployed)
 - Private DNS Zones (auto-registration + Key Vault PE)
 - Log Analytics (500 MB/day cap)
 - Recovery Services Vault (VM backup)
@@ -71,7 +175,7 @@ cd ../infra/bicep/smb-ready-foundation
 - Azure Key Vault (RBAC, private endpoint, purge protection)
 - Azure Automation Account (patch management)
 - Microsoft Defender for Cloud (Free tier)
-- 34 Azure Policy guardrails (30 at MG scope, 3+1 at subscription scope)
+- 33 Azure Policy guardrails (30 at MG scope, 3 at subscription scope)
 - Monthly budget alert ($500)
 
 ### Scenario-Specific
