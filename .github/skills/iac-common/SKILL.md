@@ -114,6 +114,7 @@ Deploy everything in one operation. Still requires user approval.
 | Bootstrap backend templates   | `terraform-patterns/references/bootstrap-backend-template.md`                                                                         |
 | Deploy script templates       | `terraform-patterns/references/deploy-script-template.md`                                                                             |
 | Circuit breaker               | `references/circuit-breaker.md`                                                                                                       |
+| Codegen shared workflow       | `references/codegen-shared-workflow.md`                                                                                               |
 
 ## Circuit Breaker
 

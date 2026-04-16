@@ -263,11 +263,39 @@ function scanFile(filePath, violations, warningPatterns = []) {
 /**
  * Detect tag keys that differ only by casing (e.g. both Environment and environment).
  * Azure Policy treats case-variant tag keys as ambiguous evaluation paths.
+ * Uses simple brace-depth tracking to skip keys inside Bicep `params: {}`
+ * blocks, which are module parameter assignments, not tag keys.
  */
 function checkTagCasingDuplicates(relPath, content) {
   const tagKeyPattern =
     /['"]?(Environment|ManagedBy|Project|Owner|environment|managedby|managedBy|project|owner)['"]?\s*[:=]/gi;
-  const found = findAllMatches(tagKeyPattern, content).map((m) => m[1]);
+  const lines = content.split("\n");
+  let inParams = false;
+  let braceDepth = 0;
+  const found = [];
+  for (const line of lines) {
+    // Track entry into params: { ... } blocks
+    if (/^\s*params:\s*\{/.test(line)) {
+      inParams = true;
+      braceDepth = 1;
+      continue;
+    }
+    if (inParams) {
+      for (const ch of line) {
+        if (ch === "{") braceDepth++;
+        if (ch === "}") braceDepth--;
+      }
+      if (braceDepth <= 0) inParams = false;
+      continue;
+    }
+    // Skip param declarations
+    if (/^\s*param\s/.test(line)) continue;
+    let m;
+    tagKeyPattern.lastIndex = 0;
+    while ((m = tagKeyPattern.exec(line)) !== null) {
+      found.push(m[1]);
+    }
+  }
   const seen = new Map();
   for (const key of found) {
     const lower = key.toLowerCase();

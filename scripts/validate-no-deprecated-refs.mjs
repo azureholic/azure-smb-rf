@@ -121,7 +121,8 @@ const DEPRECATED_PATTERNS = [
   // Historical references in changelogs and archival records are excluded
   // via EXCLUDE_PATTERNS.
   {
-    pattern: /(?<![\w/])docs\/(?!tf-support|adr\/|diagrams\/)[\w-]+/gi,
+    pattern:
+      /(?<![\w/])docs\/(?!tf-support|adr\/|diagrams\/|images\/|partner-quick-reference)[\w-]+/gi,
     message:
       "Reference to retired docs/ tree (canonical source is site/src/content/docs/)",
     severity: "warn",
@@ -200,6 +201,7 @@ function shouldIgnoreDeprecatedMatch(message, lineText, matchedText) {
     /git checkout -b docs\//i,
     /^\|\s*`docs\//,
     /branch name.*`docs\//i,
+    /`docs\/[\w-]+`/, // backtick-wrapped branch name examples
   ];
 
   if (branchExamplePatterns.some((pattern) => pattern.test(lineText))) {

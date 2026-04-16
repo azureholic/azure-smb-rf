@@ -49,8 +49,8 @@ module automationAccount 'br/public:avm/res/automation/automation-account:0.19.0
     managedIdentities: {
       systemAssigned: true
     }
-    // Disable public network access is not needed for SMB — keep enabled for simplicity
-    publicNetworkAccess: 'Enabled'
+    // Disable public network access for production security baseline
+    publicNetworkAccess: 'Disabled'
     // Link to Log Analytics Workspace
     linkedWorkspaceResourceId: logAnalyticsWorkspaceId
     // Diagnostic settings
