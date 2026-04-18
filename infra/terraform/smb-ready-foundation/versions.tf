@@ -7,7 +7,10 @@
 // ============================================================================
 
 terraform {
-  required_version = ">= 1.9.0"
+  # 1.12+ required: earlier versions fail `terraform validate` on the
+  # AVM recovery-services-vault module due to lack of short-circuit
+  # evaluation in variable validation conditions.
+  required_version = ">= 1.12.0"
 
   required_providers {
     azurerm = {
