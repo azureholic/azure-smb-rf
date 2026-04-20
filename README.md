@@ -11,6 +11,7 @@
 [![MIT License][license-shield]][license-url]
 [![Azure][azure-shield]][azure-url]
 [![Version](https://img.shields.io/badge/version-v0.10.0-blue?style=for-the-badge)](VERSION.md)
+[![Docs](https://img.shields.io/github/actions/workflow/status/jonathan-vella/azure-smb-rf/deploy-docs.yml?style=for-the-badge&label=docs)](https://jonathan-vella.github.io/azure-smb-rf/)
 
 <!-- PROJECT LOGO -->
 <br />
@@ -150,14 +151,14 @@ and cleans up stale resources.
 
 ### Resources (6 Resource Groups)
 
-| Resource Group        | Resources                                                               |
-| --------------------- | ----------------------------------------------------------------------- |
-| `rg-hub-smb-{r}`      | Hub VNet, NSG, Private DNS, Firewall*, VPN GW*, Route Tables\\* |
-| `rg-spoke-prod-{r}`   | Spoke VNet, NSG, NAT Gateway\*                                          |
-| `rg-monitor-smb-{r}`  | Log Analytics (500MB/day cap), Automation Account                       |
-| `rg-backup-smb-{r}`   | Recovery Services Vault                                                 |
-| `rg-security-smb-{r}` | Key Vault + Private Endpoint                                            |
-| `rg-migrate-smb-{r}`  | Azure Migrate Project                                                   |
+| Resource Group        | Resources                                                        |
+| --------------------- | ---------------------------------------------------------------- |
+| `rg-hub-smb-{r}`      | Hub VNet, NSG, Private DNS, Firewall*, VPN GW*, Route Tables\\\* |
+| `rg-spoke-prod-{r}`   | Spoke VNet, NSG, NAT Gateway\*                                   |
+| `rg-monitor-smb-{r}`  | Log Analytics (500MB/day cap), Automation Account                |
+| `rg-backup-smb-{r}`   | Recovery Services Vault                                          |
+| `rg-security-smb-{r}` | Key Vault + Private Endpoint                                     |
+| `rg-migrate-smb-{r}`  | Azure Migrate Project                                            |
 
 \*Conditional — depends on scenario. `{r}` = region abbreviation (e.g., `swc`).
 
