@@ -1,0 +1,18 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.2.2">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>smb-rf-console-apphost</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.2.2" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ManagementConsole.ApiService\ManagementConsole.ApiService.csproj" />
+  </ItemGroup>
+
+</Project>

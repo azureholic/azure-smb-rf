@@ -1,0 +1,145 @@
+:root {
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    sans-serif;
+  color-scheme: light dark;
+  --fg: #111827;
+  --bg: #ffffff;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #2563eb;
+  --accent-fg: #ffffff;
+  --danger: #dc2626;
+  --ok: #16a34a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #f3f4f6;
+    --bg: #0b1220;
+    --muted: #9ca3af;
+    --border: #1f2937;
+    --accent: #3b82f6;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+h1 {
+  margin-top: 0;
+}
+h2 {
+  margin-top: 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.25rem;
+}
+label {
+  display: block;
+  margin: 0.5rem 0 0.25rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+button {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-fg);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+}
+button.secondary {
+  background: transparent;
+  color: var(--accent);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+}
+.card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.card.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+.stepper {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.stepper .step {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.stepper .step.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.stepper .step.done {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+.logs {
+  background: #0b1220;
+  color: #d1d5db;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  padding: 0.75rem;
+  height: 360px;
+  overflow: auto;
+  border-radius: 6px;
+  white-space: pre-wrap;
+}
+.error {
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}

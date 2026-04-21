@@ -1,0 +1,23 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Node
+node_modules/
+dist/
+.vite/
+*.log
+
+# Aspire
+.aspire/
+
+# Environment
+.env
+.env.local
+appsettings.Development.json
+
+# Deployment workdirs created by the API service
+workdirs/

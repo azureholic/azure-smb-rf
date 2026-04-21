@@ -1,0 +1,18 @@
+{
+  "TenantId": "1d3fe57e-e849-4872-abee-c41ab915ef28",
+  "Api": {
+    "AppName": "smb-rf-console-api",
+    "ClientId": "3eec6c07-8320-4e57-8d28-092bfffa5f04",
+    "IdentifierUri": "api://3eec6c07-8320-4e57-8d28-092bfffa5f04",
+    "Scope": "api://3eec6c07-8320-4e57-8d28-092bfffa5f04/access_as_user",
+    "ScopeId": "6dad504d-de4d-43ee-a22e-fc226f4f1b5e"
+  },
+  "Spa": {
+    "AppName": "smb-rf-console-spa",
+    "ClientId": "b4984ae3-eb80-4606-8864-93d78b4623e7",
+    "RedirectUris": [
+      "http://localhost:5173",
+      "https://localhost:5173"
+    ]
+  }
+}
