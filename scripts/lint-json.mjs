@@ -10,16 +10,31 @@
  */
 
 import fs from "node:fs";
+import path from "node:path";
 
-const EXCLUDE_DIRS = ["node_modules", "infra", ".devcontainer", ".vscode"];
+const EXCLUDE_DIRS = new Set([
+  "node_modules",
+  "infra",
+  ".devcontainer",
+  ".vscode",
+  ".git",
+]);
 
-const files = fs
-  .globSync("**/*.json", {
-    exclude: (p) => EXCLUDE_DIRS.includes(p.name) && p.isDirectory(),
-  })
-  // fs.globSync exclude may not filter nested node_modules (e.g. site/node_modules);
-  // apply a path-level guard to ensure all node_modules trees are excluded.
-  .filter((f) => !f.split("/").includes("node_modules"));
+// fs.globSync requires Node 22+. Use a portable recursive walk instead so the
+// script runs on Node 21 as well.
+function walk(dir, out = []) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (EXCLUDE_DIRS.has(entry.name)) continue;
+      walk(path.join(dir, entry.name), out);
+    } else if (entry.isFile() && entry.name.endsWith(".json")) {
+      out.push(path.join(dir, entry.name));
+    }
+  }
+  return out;
+}
+
+const files = walk(".").map((f) => f.replace(/^\.\//, ""));
 
 let failures = 0;
 
